@@ -5,7 +5,13 @@ from abc import ABC
 
 class Pokemon(ABC):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
-        
+        """
+        Inicializa.
+        Parameters:
+            name (str):
+            level ()
+            strenght():
+        """        
         self.name = name
         self.level = level
         self.strenght = strenght
@@ -30,13 +36,10 @@ class WaterPokemon(Pokemon):
             super(WaterPokemon, self).__init__()
             
 class FirePokemon(Pokemon):
-    def __init__(self):
-            """Inicializa.
-            Parameters:
-                None
-            """
-            super(FirePokemon, self).__init__()
-
+    def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, temperature):
+        self.temperature = temperature
+        super(FirePokemon, self).__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+        
 class GrassPokemon(Pokemon):
     def __init__(self):
         """Inicializa.
