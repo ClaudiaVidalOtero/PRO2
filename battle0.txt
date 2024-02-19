@@ -1,0 +1,15 @@
+Lance Dragonheart
+Chikorita (Type: Grass, Level: 72, Atk: 76, Def: 38, HP: 192, Agi: 41, Blessing: 0.1)
+Charmander (Type: Fire, Level: 92, Atk: 86, Def: 48, HP: 202, Agi: 51, Temperature: 0.2)
+Skiploom (Type: Grass, Level: 29, Atk: 94, Def: 18, HP: 326, Agi: 24, Blessing: 0.2)
+Typhlosion (Type: Fire, Level: 76, Atk: 158, Def: 44, HP: 506, Agi: 53, Temperature: 0.15)
+Psyduck (Type: Water, Level: 1, Atk: 40, Def: 2, HP: 156, Agi: 5, Surge_mode: False)
+Poliwag (Type: Water, Level: 98, Atk: 89, Def: 51, HP: 205, Agi: 54, Surge_mode: False)
+
+Calem Rockwell
+Charizard (Type: Fire, Level: 6, Atk: 123, Def: 9, HP: 471, Agi: 18, Temperature: 0.2)
+Seel (Type: Water, Level: 69, Atk: 74, Def: 36, HP: 190, Agi: 39, Surge_mode: False)
+Grovyle (Type: Grass, Level: 16, Atk: 88, Def: 12, HP: 320, Agi: 18, Blessing: 0.2)
+Rapidash (Type: Fire, Level: 11, Atk: 85, Def: 9, HP: 317, Agi: 15, Temperature: 0.15)
+Gloom (Type: Grass, Level: 81, Atk: 120, Def: 44, HP: 352, Agi: 50, Blessing: 0.15)
+Lapras (Type: Water, Level: 74, Atk: 157, Def: 43, HP: 505, Agi: 52, Surge_mode: False)
