@@ -31,7 +31,7 @@ class WaterPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, surge_mode):
             """Inicializa.
             Parameters:
-                None    
+                surge_mode(bool):   
             """
             self.surge_mode = False
             super(WaterPokemon, self).__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
@@ -40,7 +40,7 @@ class FirePokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, temperature):
             """Inicializa.
             Parameters:
-                None
+                temperature(float):
             """
             self.temperature = temperature
             super(FirePokemon, self).__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
