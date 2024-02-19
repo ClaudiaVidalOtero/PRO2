@@ -9,7 +9,14 @@ class Pokemon(ABC):
         Inicializa.
         Parameters:
             name (str):
-        """        
+            level (int)
+            strenght(int):
+            defense(int)
+            hp(int)
+            total_hp(int): 
+            agility(int):
+            pokemon_type(str):
+        """      
         self.name = name
         self.level = level
         self.strenght = strenght
@@ -47,6 +54,7 @@ class GrassPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, healing):
         """Inicializa.
         Parameters:
+            healing(float):
         """
         self.healing = healing
         super(GrassPokemon, self).__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
