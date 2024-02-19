@@ -22,7 +22,7 @@ class Pokemon(ABC):
 
 
 @abstractmethod
-def tafdh(self)
+def tafdh(self) xx
     
 
 class WaterPokemon(Pokemon):
