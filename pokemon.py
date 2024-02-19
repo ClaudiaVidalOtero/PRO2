@@ -5,7 +5,13 @@ from abc import ABC
 
 class Pokemon(ABC):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
-        
+        """
+        Inicializa.
+        Parameters:
+            name (str):
+            level ()
+            strenght():
+        """        
         self.name = name
         self.level = level
         self.strenght = strenght
