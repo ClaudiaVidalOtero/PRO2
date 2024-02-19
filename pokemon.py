@@ -1,8 +1,7 @@
 """
 TODO: Implement in this file the Pokemon hierarchy.
 """
-from abc import ABC
-
+from abc import ABC, abstractmethod
 class Pokemon(ABC):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
         """
@@ -26,10 +25,17 @@ class Pokemon(ABC):
         self.agility = agility
         self.pokemon_type = pokemon_type
 
+    def basic_attack(p):
+        pass
 
+    def is_debilitated():
+        pass
 
-@abstractmethod
-def tafdh(self) xx
+    @abstractmethod
+    def effectiveness(p):
+         pass  
+    
+
     
 
 class WaterPokemon(Pokemon):
@@ -39,7 +45,7 @@ class WaterPokemon(Pokemon):
                 surge_mode(bool):   
             """
             self.surge_mode = False
-            super(WaterPokemon, self).__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+            super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
             
 class FirePokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, temperature):
@@ -48,7 +54,7 @@ class FirePokemon(Pokemon):
                 temperature(float):
             """
             self.temperature = temperature
-            super(FirePokemon, self).__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+            super().__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
 
 class GrassPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, healing):
@@ -57,4 +63,4 @@ class GrassPokemon(Pokemon):
             healing(float):
         """
         self.healing = healing
-        super(GrassPokemon, self).__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+        super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
