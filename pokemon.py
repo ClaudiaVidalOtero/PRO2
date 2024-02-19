@@ -33,7 +33,8 @@ class Pokemon(ABC):
 
     @abstractmethod
     def effectiveness(p):
-         pass
+         pass  
+    
 
     
 

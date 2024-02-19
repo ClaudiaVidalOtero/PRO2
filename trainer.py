@@ -14,4 +14,5 @@ class Trainer:
         """
         Returns:
             aaaa(bool)
+            
         """
