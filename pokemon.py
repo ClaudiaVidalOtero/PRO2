@@ -27,22 +27,22 @@ class Pokemon(ABC):
 
     @property
     def name(self):
-        # Property (getter) for the name
+        # Property (getter) para name
         return self.name
     @name.setter
     def name(self, value: str):
-        # Setter for the name
+        # Setter para name
         if isinstance(value, str) and len(value) > 0:
             self.name = value
         else:
             raise ValueError("Name must be a non-empty string")
     @property
     def level(self):
-        # Property (getter) for the level
+        # Property (getter) para level
         return self.level
     @level.setter
     def level(self, value: int):
-        # Setter for the level
+        # Setter para level
         if isinstance (value, int) and value >= 0:
             self.level = value
         else:
@@ -50,11 +50,11 @@ class Pokemon(ABC):
 
     @property
     def strenght(self):
-        # Property (getter) for the strenght
+        # Property (getter) para strenght
         return self.strenght
     @strenght.setter
     def strenght(self, value: int):
-        # Setter for the strenght
+        # Setter para strenght
         if isinstance (value, int) and value >= 0:
             self.level = value
         else:
@@ -62,11 +62,11 @@ class Pokemon(ABC):
 
     @property
     def defense(self):
-        # Property (getter) for the defense
+        # Property (getter) para defense
         return self.defense    
     @defense.setter
     def defense(self, value: int):
-        # Setter for the defense
+        # Setter para defense
         if isinstance (value, int) and value >= 0:
             self.defense = value
         else:
@@ -74,11 +74,11 @@ class Pokemon(ABC):
   
     @property
     def hp(self):
-        # Property (getter) for the hp
+        # Property (getter) para hp
         return self.hp
     @hp.setter
     def hp(self, value: int):
-        # Setter for the hp
+        # Setter para hp
         if isinstance (value, int) and value >= 0:
             self.defense = value
         else:
@@ -86,11 +86,11 @@ class Pokemon(ABC):
     
     @property
     def total_hp(self):
-        # Property (getter) for the total hp
+        # Property (getter) para total hp
         return self.total_hp
     @total_hp.setter
     def name(self, value: int):
-        # Setter for the total hp
+        # Setter para total hp
         if isinstance (value, int) and value >= 0:
             self.total_hp = value
         else:
@@ -98,11 +98,11 @@ class Pokemon(ABC):
     
     @property
     def agility(self):
-        # Property (getter) for the agility
+        # Property (getter) para agility
         return self.agility
     @agility.setter
     def agility(self, value: int):
-        # Setter for the agility
+        # Setter para agility
         if isinstance(value, int) and value >= 0:
             self.agility = value
         else:
@@ -110,11 +110,11 @@ class Pokemon(ABC):
 
     @property
     def pokemon_type(self):
-        # Property (getter) for the pokemon type
+        # Property (getter) para pokemon type
         return self.pokemon_type
     @pokemon_type.setter
     def pokemon_type(self, value: str):
-        # Setter for the pokemon type
+        # Setter para pokemon type
         if isinstance(value, str) and len(value) > 0:
             self.pokemon_type = value
         else:
@@ -171,15 +171,15 @@ class WaterPokemon(Pokemon):
             surge_mode(bool):   
         """
         self.surge_mode = surge_mode
-        super().__init__(name, level, strenght, defense, hp, total_hp, agility, "Water")
+        super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
 
     @property
     def surge_mode(self):
-        # Property (getter) for the surge mode
+        # Property (getter) para surge mode
         return self.surge_mode 
     @surge_mode.setter
     def surge_mode(self, value: bool):
-        # Setter for the surge mode
+        # Setter para surge mode
         if isinstance(value, bool):
             self.surge_mode = value
         else:
@@ -206,20 +206,21 @@ class WaterPokemon(Pokemon):
         
         factor_effectiveness = self.effectiveness(opponent)
 
-        if factor_effectiveness == 1:
-            factor = 1.5  # Factor correcto para Water contra Fire
-        elif factor_effectiveness == 0:
-            factor = 1  # Factor correcto para Water contra Water
-        elif factor_effectiveness == -1:
-            factor = 0.5 # Factor correcto para Water contra Grass
+        if isinstance(opponent, FirePokemon):
+            factor = 1.5
+        elif isinstance(opponent, WaterPokemon):
+            factor = 1
+        elif isinstance(opponent, GrassPokemon):
+            factor = 0.5
+        else:
+            raise ValueError("Tipo de Pokemon no reconocido.")
         
         if self.surge_mode: # Ajusta el factor si surge_mode es True
             factor += 0.1
 
         damage = max(1, round(factor*self.strength) - opponent.defense)
         opponent.hp -= damage
-        if opponent.surge_mode:
-            factor += 0.1
+
         return damage
 
     def effectiveness(opponent: 'Pokemon') -> int:
@@ -246,27 +247,27 @@ class WaterPokemon(Pokemon):
         
 class GrassPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, healing):
-        """Inicializa.
+        """Inicializa el Pokemon tipo Grass
         
         Parameters:
             healing (float):
         """
         self.healing = healing
-        super().__init__(name, level, strenght, defense, hp, total_hp, agility, "Grass")
+        super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
     
     @property
     def healing(self):
-        # Property (getter) for the healing
+        # Property (getter) para healing
         return self.healing 
     @healing.setter
     def healing(self, value: float):
-        # Setter for the healing
+        # Setter para healing
         if isinstance(value, float) and value > 0:
             self.healing = value
         else:
             raise ValueError("Healing debe ser un valor positivo.")
 
-    def grass_attack(opponent: 'Pokemon') -> int:
+    def grass_attack(self, opponent: 'Pokemon') -> int:
         """
         Descripcion.
         
@@ -274,20 +275,41 @@ class GrassPokemon(Pokemon):
             opponent ():
 
         Returns:
-            int:
+            int: El número de unidades de daño causadas. 
         """
-        pass
-    def heal(): 
+
+        if isinstance(opponent, WaterPokemon):
+            factor = 1.5
+        elif isinstance(opponent, GrassPokemon):
+            factor = 1
+        elif isinstance(opponent, FirePokemon):
+            factor = 0.5
+        else:
+            raise ValueError("Tipo de Pokemon no reconocido.")
+    
+        damage = max(1, round(factor*self.strength) - opponent.defense)
+        opponent.hp -= damage
+
+        return damage
+    
+    def heal(self) -> int: 
         """
         Descripcion.
         
-        Parameters: 
-            None.
-        
         Returns:
-            int:
+            int: El número de unidades de puntos de vida efectivas en las que se ha curado el objetivo.
         """
-        pass
+        heal_points = round(self.healing * self.hp)
+        healed_hp = heal_points + self.hp
+
+        if healed_hp > self.total_hp:
+            heal_points = self.total_hp - self.hp
+            self.hp = self.total_hp
+            return heal_points
+        elif healed_hp <= self.total_hp:
+            self.hp = healed_hp
+            return heal_points
+
     def effectiveness(opponent: 'Pokemon') -> int:
         """
         Devuelve 1 si el Pokemon es de tipo WaterPokemon, 0 si es de tipo GrassPokemon,
@@ -318,21 +340,44 @@ class FirePokemon(Pokemon):
             temperature(float):
         """
         self.temperature = temperature
-        super().__init__(self, name, level, strenght, defense, hp, total_hp, agility, "Fire")
+        super().__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
     
     @property
     def temperature(self):
-        # Property (getter) for the temperature
+        # Property (getter) para temperature
         return self.temperature 
     @temperature.setter
     def temperature(self, value: float):
-        # Setter for the temperature
+        # Setter para temperature
         if isinstance(value, float) and value > 0:
             self.temperature = value
         else:
             raise ValueError("Temperatura debe ser un valor positivo.")
         
-    def fire_attack(opponent: 'Pokemon') -> int:
+    def fire_attack(self, opponent: 'Pokemon') -> int:
+        """
+        Descripcion.
+        
+        Parameters:
+            opponent ():
+
+        Returns:
+            int: El número de unidades de daño causadas. 
+        """
+        if isinstance(opponent, GrassPokemon):
+            factor = 1.5
+        elif isinstance(opponent, FirePokemon):
+            factor = 1
+        elif isinstance(opponent, WaterPokemon):
+            factor = 0.5
+        else:
+            raise ValueError("Tipo de Pokemon no reconocido.")
+
+        damage = max(1, round(factor*self.strength) - opponent.defense)
+        opponent.hp -= damage
+
+        return damage
+    def embers(self, opponent: 'Pokemon') -> int:
         """
         Descripcion.
         
@@ -342,18 +387,10 @@ class FirePokemon(Pokemon):
         Returns:
             int:
         """
-        pass
-    def embers(opponent: 'Pokemon') -> int:
-        """
-        Descripcion.
-        
-        Parameters:
-            opponent ():
-
-        Returns:
-            int:
-        """
-        pass
+        damage = self.strenght*self.temperature
+        opponent.hp -= damage
+        return damage
+    
     def effectiveness(opponent: 'Pokemon') -> int:
         """
         Devuelve 1 si el Pokemon es de tipo GrassPokemon, 0 si es de tipo FirePokemon,
