@@ -5,41 +5,71 @@ from pokemon import *
 class Trainer: 
     def __init__(self, name, pokemon):
         """
-        Descripcion.
+        Inicializa la clase Trainer y se le asignan sus atributos.
 
         Parameters:
-            name (str):
-            pokemon (list):
+            name (str): Nombre del entrenador.
+            pokemon (list): Lista de Pokemons que tiene.
         """
         self.name = name
         self.pokemon = pokemon
-    def select_initial_pokemon():
+    @property
+    def name(self):
+        # Property (getter) para name
+        return self.name
+    @name.setter
+    def name(self, value: str):
+        # Setter para name
+        if isinstance(value, str) and len(value) > 0:
+            self.name = value
+        else:
+            raise ValueError("Name must be a non-empty string")
+    @property
+    def pokemon(self):
+        # Property (getter) para pokemon
+        return self.pokemon
+    @pokemon.setter
+    def pokemon(self, value: list):
+        #Setter para la lista de Pokemon
+        if isinstance(value, list):
+            self.pokemon = value
+        else:
+            raise ValueError("pokemon tiene que ser una lista.")
+    def select_initial_pokemon(self):
         """
-        Descripcion.
+        Selecciona el primer pokemon no debilitado.
 
-        Parameters:
-            None.
+        Returns:
+            Pokemon: p, pokemon seleccionado.
+            None: No devuelve nada si no le quedan pokemons o están todos debilitados.
+        """
+        for p in self.pokemon:
+            if p.hp > 0:
+                return p
+        return None
+            
+    def select_next_pokemon(self, opponent):
+        """
+        Selecciona el Pokemon no debilitado del Entrenador que mejor pueda hacer frente al Pokemon oponente.
 
+        Parameters: 
+            opponent: Pokemon oponente
         Returns:
+            Pokemon: next_p, pokemon seleccionado.   
         """
-        pass
-    def select_next_pokemon(p: Pokemon):
+        next_p = None
+
+        for p in self.pokemon: 
+            if p.hp > 0:
+                if next_p is None or (p.effectiveness(opponent), p.level) > (next_p.effectiveness(opponent), next_p.level):
+                    next_p = p
+        return next_p
+    
+    def all_debilitated(self):
         """
-        Descripcion.
-        
-        Parameters:
-            p (list):???
-        
-        Returns:
-        """
-        pass
-    def all_debilitated():
-        """
-        Descripcion
-        
-        Parameters:
-            None.
+        Reconoce si todos los Pokémon del entrenador están debilitados, es decir, los puntos de vida de todos es igual a 0.
         
         Returns:
-            bool:
+            bool: True si para todos los Pokémon del entrenador su atributo hp vale cero, False en caso contrario.  
         """
+        return all(p.hp == 0 for p in self.pokemon)
