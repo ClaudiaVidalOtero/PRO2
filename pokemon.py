@@ -5,7 +5,8 @@ from abc import ABC, abstractmethod
 class Pokemon(ABC):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
         """
-        Inicializa.
+        Inicializa la clase Pokemon y se le asignan sus atributos.
+
         Parameters:
             name (str): Nombre del Pokemon.
             level (int): Nivel del Pokemon del 1 hasta al 100.
@@ -80,9 +81,9 @@ class Pokemon(ABC):
     def hp(self, value: int):
         # Setter para hp
         if isinstance (value, int) and value >= 0:
-            self.defense = value
+            self.hp = value
         else:
-            raise ValueError("HP must be a non-negative integer")
+            self.hp = 0
     
     @property
     def total_hp(self):
@@ -165,7 +166,7 @@ class Pokemon(ABC):
 class WaterPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, surge_mode):
         """
-        Inicializa.
+        Inicializa la subclase WaterPokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             surge_mode(bool):   
@@ -204,8 +205,6 @@ class WaterPokemon(Pokemon):
         """ 
         self.surge_mode = self.check_surge_activation()
         
-        factor_effectiveness = self.effectiveness(opponent)
-
         if isinstance(opponent, FirePokemon):
             factor = 1.5
         elif isinstance(opponent, WaterPokemon):
@@ -247,7 +246,8 @@ class WaterPokemon(Pokemon):
         
 class GrassPokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, healing):
-        """Inicializa el Pokemon tipo Grass
+        """
+        Inicializa la subclase GrassPokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             healing (float):
@@ -334,7 +334,7 @@ class GrassPokemon(Pokemon):
 class FirePokemon(Pokemon):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, temperature):
         """
-        Inicializa.
+        Inicializa la subclase FirePokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             temperature(float):
@@ -385,7 +385,7 @@ class FirePokemon(Pokemon):
             opponent ():
 
         Returns:
-            int:
+            int: El número de unidades de daño causadas. 
         """
         damage = self.strenght*self.temperature
         opponent.hp -= damage
