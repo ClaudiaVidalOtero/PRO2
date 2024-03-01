@@ -18,23 +18,18 @@ class Trainer:
         # Property (getter) para name
         return self.name
     @name.setter
-    def name(self, value: str):
+    def name(self, value):
         # Setter para name
-        if isinstance(value, str) and len(value) > 0:
-            self.name = value
-        else:
-            raise ValueError("Name must be a non-empty string")
+        self.name = value
     @property
     def pokemon(self):
         # Property (getter) para pokemon
         return self.pokemon
     @pokemon.setter
-    def pokemon(self, value: list):
+    def pokemon(self, value):
         #Setter para la lista de Pokemon
-        if isinstance(value, list):
-            self.pokemon = value
-        else:
-            raise ValueError("pokemon tiene que ser una lista.")
+        self.pokemon = value
+
     def select_initial_pokemon(self):
         """
         Selecciona el primer pokemon no debilitado.
