@@ -30,11 +30,7 @@ class Pokemon(ABC):
     def name(self):
         # Property (getter) para name
         return self.name
-    @name.setter
-    def name(self, value):
-        # Setter para name
-        self.name = value
-
+    
     @property
     def level(self):
         # Property (getter) para level
@@ -78,10 +74,6 @@ class Pokemon(ABC):
     def total_hp(self):
         # Property (getter) para total hp
         return self.total_hp
-    @total_hp.setter
-    def total_hp(self, value):
-        # Setter para total hp
-        self.total_hp = value
 
     @property
     def agility(self):
@@ -361,7 +353,7 @@ class FirePokemon(Pokemon):
         opponent.hp -= damage
         return damage
     
-    def effectiveness(opponent: 'Pokemon') -> int:
+    def effectiveness(self, opponent: 'Pokemon') -> int:
         """
         Devuelve 1 si el Pokemon es de tipo GrassPokemon, 0 si es de tipo FirePokemon,
         y -1 si es de tipo WaterPokemon.
