@@ -1,7 +1,9 @@
 """
-TODO: Implement in the file the Trainer class
+Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
+Claudia Vidal Otero (claudia.votero@udc.es)
 """
 from pokemon import *
+
 class Trainer: 
     def __init__(self, name, pokemon):
         """

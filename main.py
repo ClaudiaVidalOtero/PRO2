@@ -1,3 +1,7 @@
+"""
+Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
+Claudia Vidal Otero (claudia.votero@udc.es)
+"""
 import sys
 
 class PokemonSimulator:

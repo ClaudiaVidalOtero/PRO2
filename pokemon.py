@@ -1,7 +1,9 @@
 """
-TODO: Implement in this file the Pokemon hierarchy.
+Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
+Claudia Vidal Otero (claudia.votero@udc.es)
 """
 from abc import ABC, abstractmethod
+
 class Pokemon(ABC):
     def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
         """
