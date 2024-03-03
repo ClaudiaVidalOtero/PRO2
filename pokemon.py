@@ -3,97 +3,97 @@ Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
 from abc import ABC, abstractmethod
-
+import math
 class Pokemon(ABC):
-    def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type):
+    def __init__(self, name, level, strength, defense, hp, total_hp, agility, pokemon_type):
         """
         Inicializa la clase Pokemon y se le asignan sus atributos.
 
         Parameters:
             name (str): Nombre del Pokemon.
             level (int): Nivel del Pokemon del 1 hasta al 100.
-            strenght (int): Fuerza del Pokemon.
+            strength (int): Fuerza del Pokemon.
             defense (int): Defensa del Pokemon 
             hp (int): Puntos de salud del Pokemon.
             total_hp (int): Puntos de salud total del Pokemon.
             agility (int): Agilidad del Pokemon.
             pokemon_type (str): Tipo de Pokemon.
         """
-        self.name = name
-        self.level = level
-        self.strenght = strenght
-        self.defense = defense
-        self.hp = hp
-        self.total_hp = total_hp
-        self.agility = agility
-        self.pokemon_type = pokemon_type
+        self._name = name
+        self._level = level
+        self._strength = strength
+        self._defense = defense
+        self._hp = hp
+        self._total_hp = total_hp
+        self._agility = agility
+        self._pokemon_type = pokemon_type
 
     @property
     def name(self):
         # Property (getter) para name
-        return self.name
+        return self._name
     
     @property
     def level(self):
         # Property (getter) para level
-        return self.level
+        return self._level
     @level.setter
     def level(self, value):
         # Setter para level
-        self.level = value
+        self._level = value
 
     @property
-    def strenght(self):
-        # Property (getter) para strenght
-        return self.strenght
-    @strenght.setter
-    def strenght(self, value):
-        # Setter para strenght
-        self.strenght = value
+    def strength(self):
+        # Property (getter) para strength
+        return self._strength
+    @strength.setter
+    def strength(self, value):
+        # Setter para strength
+        self._strength = value
 
     @property
     def defense(self):
         # Property (getter) para defense
-        return self.defense    
+        return self._defense    
     @defense.setter
     def defense(self, value):
         # Setter para defense
-        self.defense = value
+        self._defense = value
   
     @property
     def hp(self):
         # Property (getter) para hp
-        return self.hp
+        return self._hp
     @hp.setter
-    def hp(self, value):
+    def hp(self, value:int):
         # Setter para hp
         if value >= 0:
-            self.hp = value
+            self._hp = value
         else:
-            self.hp = 0
+            self._hp = 0
     
     @property
     def total_hp(self):
         # Property (getter) para total hp
-        return self.total_hp
+        return self._total_hp
 
     @property
     def agility(self):
         # Property (getter) para agility
-        return self.agility
+        return self._agility
     @agility.setter
     def agility(self, value):
         # Setter para agility
-        self.agility = value
+        self._agility = value
 
     @property
     def pokemon_type(self):
         # Property (getter) para pokemon type
-        return self.pokemon_type
+        return self._pokemon_type
     @pokemon_type.setter
     def pokemon_type(self, value):
         # Setter para pokemon type
-        self.pokemon_type = value
+        self._pokemon_type = value
     
     def basic_attack(self, opponent:'Pokemon') -> int:
         """
@@ -105,7 +105,7 @@ class Pokemon(ABC):
         Returns:
             int: El número de unidades de daño que el Pokemon causó a opponent.
         """
-        damage = max(1, (self.strenght - opponent.defense))
+        damage = max(1, (self.strength - opponent.defense))
         opponent.hp -= damage
         return damage
 
@@ -119,7 +119,7 @@ class Pokemon(ABC):
         return self.hp == 0
 
     @abstractmethod
-    def effectiviness(self, opponent: 'Pokemon') -> int:
+    def effectiveness(self, opponent: 'Pokemon') -> int:
         """
         Método abstracto que heredan las subclases de pokemon.
         """
@@ -132,28 +132,28 @@ class Pokemon(ABC):
             str: Una cadena con información detallada del pokemon.
         """
 
-        info = '{name} ({pokemon_type} Stats: )'.format(self.name, self.pokemon_type)
-        info += 'Level: {level}, ATT: {strength}, DEF: {defense}, AGI: {agility}, HP: {hp}/{total_hp}.'.format(self.level, self.strength, self.defense, self.agility, self.hp, self.total_hp)
+        info = "{0} ({1}) Stats:".format(self._name, self._pokemon_type)
+        info += 'Level: {0}, ATT: {1}, DEF: {2}, AGI: {3}, HP: {4}/{5}.'.format(self._level, self._strength, self._defense, self._agility, self._hp, self._total_hp)
         return info
 class WaterPokemon(Pokemon):
-    def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, surge_mode):
+    def __init__(self, name, level, strength, defense, hp, total_hp, agility, pokemon_type, surge_mode):
         """
         Inicializa la subclase WaterPokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             surge_mode(bool): Modo de aumento del pokemon.
         """
-        self.surge_mode = surge_mode
-        super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+        self._surge_mode = surge_mode
+        super().__init__(name, level, strength, defense, hp, total_hp, agility, pokemon_type)
 
     @property
     def surge_mode(self):
         # Property (getter) para surge mode
-        return self.surge_mode 
+        return self._surge_mode 
     @surge_mode.setter
-    def surge_mode(self, value: bool):
+    def surge_mode(self, value):
         # Setter para surge mode
-        self.surge_mode = value
+        self._surge_mode = value
         
     def check_surge_activation(self) -> bool:
         """
@@ -187,7 +187,7 @@ class WaterPokemon(Pokemon):
         if self.surge_mode: # Ajusta el factor si surge_mode es True
             factor += 0.1
 
-        damage = max(1, round(factor*self.strength) - opponent.defense)
+        damage = max(1, math.floor(factor*self.strength) - opponent.defense)
         opponent.hp -= damage
 
         return damage
@@ -215,24 +215,24 @@ class WaterPokemon(Pokemon):
             raise ValueError("Tipo de Pokemon no reconocido.")
         
 class GrassPokemon(Pokemon):
-    def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, healing):
+    def __init__(self, name, level, strength, defense, hp, total_hp, agility, pokemon_type, healing):
         """
         Inicializa la subclase GrassPokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             healing (float):
         """
-        self.healing = healing
-        super().__init__(name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+        self._healing = healing
+        super().__init__(name, level, strength, defense, hp, total_hp, agility, pokemon_type)
     
     @property
     def healing(self):
         # Property (getter) para healing
-        return self.healing 
+        return self._healing 
     @healing.setter
     def healing(self, value: float):
         # Setter para healing
-        self.healing = value
+        self._healing = value
 
     def grass_attack(self, opponent: 'Pokemon') -> int:
         """
@@ -254,7 +254,7 @@ class GrassPokemon(Pokemon):
         else:
             raise ValueError("Tipo de Pokemon no reconocido.")
     
-        damage = max(1, round(factor*self.strength) - opponent.defense)
+        damage = max(1, math.floor(factor*self.strength) - opponent.defense)
         opponent.hp -= damage
 
         return damage
@@ -266,16 +266,16 @@ class GrassPokemon(Pokemon):
         Returns:
             int: El número de unidades de puntos de vida efectivas en las que se ha curado el objetivo.
         """
-        heal_points = round(self.healing * self.hp)
+        heal_points = math.floor(float(self.healing) * int(self.hp))
         healed_hp = heal_points + self.hp
-        #not so sure
+
         if healed_hp > self.total_hp:
             heal_points = self.total_hp - self.hp
             self.hp = self.total_hp
-            return heal_points
-        elif healed_hp <= self.total_hp:
+        else:
             self.hp = healed_hp
-            return heal_points
+        
+        return heal_points
 
     def effectiveness(self, opponent: 'Pokemon') -> int:
         """
@@ -299,24 +299,24 @@ class GrassPokemon(Pokemon):
         else:
             raise ValueError("Tipo de Pokemon no reconocido.")
 class FirePokemon(Pokemon):
-    def __init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type, temperature):
+    def __init__(self, name, level, strength, defense, hp, total_hp, agility, pokemon_type, temperature):
         """
         Inicializa la subclase FirePokemon, hereda los atributos de Pokemon y se le asigna un atributo más propio.
         
         Parameters:
             temperature(float):
         """
-        self.temperature = temperature
-        super().__init__(self, name, level, strenght, defense, hp, total_hp, agility, pokemon_type)
+        self._temperature = temperature
+        super().__init__(name, level, strength, defense, hp, total_hp, agility, pokemon_type)
     
     @property
     def temperature(self):
         # Property (getter) para temperature
-        return self.temperature 
+        return self._temperature 
     @temperature.setter
-    def temperature(self, value: float):
+    def temperature(self, value):
         # Setter para temperature
-        self.temperature = value        
+        self._temperature = value        
 
     def fire_attack(self, opponent: 'Pokemon') -> int:
         """
@@ -337,13 +337,13 @@ class FirePokemon(Pokemon):
         else:
             raise ValueError("Tipo de Pokemon no reconocido.")
 
-        damage = max(1, round(factor*self.strength) - opponent.defense)
+        damage = max(1, math.floor(factor*self.strength) - opponent.defense)
         opponent.hp -= damage
 
         return damage
     def embers(self, opponent: 'Pokemon') -> int:
         """
-        Disminuye la vida del oponente en strength*temperature unidades de daño,.
+        Disminuye la vida del oponente en strength*temperature unidades de daño.
         
         Parameters:
             opponent (Pokemon): El Pokemon oponente.
@@ -351,7 +351,7 @@ class FirePokemon(Pokemon):
         Returns:
             int: El número de unidades de daño causadas. 
         """
-        damage = self.strenght*self.temperature
+        damage = math.floor(self.strength*float(self.temperature))
         opponent.hp -= damage
         return damage
     

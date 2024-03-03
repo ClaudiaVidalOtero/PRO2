@@ -5,7 +5,7 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 from pokemon import *
 
 class Trainer: 
-    def __init__(self, name, pokemon):
+    def __init__(self, name,  pokemon: list[Pokemon]):
         """
         Inicializa la clase Trainer y se le asignan sus atributos.
 
@@ -13,26 +13,23 @@ class Trainer:
             name (str): Nombre del entrenador.
             pokemon (list): Lista de Pokemons que tiene.
         """
-        self.name = name
-        self.pokemon = pokemon
+        self._name = name
+        self._pokemon = pokemon
     @property
     def name(self):
         # Property (getter) para name
-        return self.name
-    @name.setter
-    def name(self, value):
-        # Setter para name
-        self.name = value
+        return self._name
+
     @property
     def pokemon(self):
         # Property (getter) para pokemon
-        return self.pokemon
+        return self._pokemon
     @pokemon.setter
     def pokemon(self, value):
         #Setter para la lista de Pokemon
-        self.pokemon = value
+        self._pokemon = value
 
-    def select_initial_pokemon(self):
+    def select_first_pokemon(self):
         """
         Selecciona el primer pokemon no debilitado.
 
@@ -44,7 +41,7 @@ class Trainer:
             if p.hp > 0:
                 return p
         return None
-            
+
     def select_next_pokemon(self, opponent):
         """
         Selecciona el Pokemon no debilitado del Entrenador que mejor pueda hacer frente al Pokemon oponente.
@@ -52,15 +49,15 @@ class Trainer:
         Parameters: 
             opponent: Pokemon oponente
         Returns:
-            Pokemon: next_p, pokemon seleccionado.   
+            Pokemon: next_pokemon, pokemon seleccionado.   
         """
-        next_p = None
-
+        next_pokemon = None
         for p in self.pokemon: 
-            if p.hp > 0:
-                if next_p is None or (p.effectiveness(opponent), p.level) > (next_p.effectiveness(opponent), next_p.level):
-                    next_p = p
-        return next_p
+            if not p.is_debilitated:
+                if next_pokemon is None or (p.effectiveness(opponent), p.level) > (next_pokemon.effectiveness(opponent), next_pokemon.level):
+                    next_pokemon = p
+        return next_pokemon
+    
     
     def all_debilitated(self):
         """

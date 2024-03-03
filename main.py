@@ -3,6 +3,10 @@ Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
 import sys
+import random
+from pokemon import *
+from trainer import Trainer
+import pandas as pd
 
 class PokemonSimulator:
     """A class that simulates Pokemon trainers and their Pokemon."""
@@ -15,7 +19,7 @@ class PokemonSimulator:
         text (str): Multiline text where the first line is the trainer's name and subsequent lines contain Pokemon details.
         
         Returns:
-        None: The function is currently set up to return None. Intended to return a Trainer instance in future development.
+        Trainer instance.
         """
 
         lines = text.split("\n")
@@ -39,29 +43,28 @@ class PokemonSimulator:
             # Creating pokemons based on their type
             if pokemon_type == 'Fire':
                 temperature = details[6].split(': ')[1]
-                # TODO: Implement creation of a FirePokemon
-                print ("TODO: Crear un FirePokemon - ", end="")
-                # Printing the attributes for now
-                print (f"name: {pokemon_name}, level: {level}, strength: {strength}, defense: {defense}, hp: {hp}, total_hp: {total_hp}, agility: {agility}, temperature: {temperature} ")
+                pokemon_instance = FirePokemon(name=pokemon_name, level=level, strength=strength,
+                                               defense=defense, hp=hp, total_hp=total_hp,
+                                               agility=agility, pokemon_type=pokemon_type, temperature=temperature)
             elif pokemon_type == 'Grass':
-                # TODO: Implement creation of a GrassPokemon
                 healing = details[6].split(': ')[1]
-                # Printing the attributes for now
-                print ("TODO: Crear un GrassPokemon - ", end="")
-                print (f"name: {pokemon_name},  level: {level}, strength: {strength}, defense: {defense}, hp: {hp}, total_hp: {total_hp}, agility: {agility}, healing: {healing} ")
+                pokemon_instance = GrassPokemon(name=pokemon_name, level=level, strength=strength,
+                                                defense=defense, hp=hp, total_hp=total_hp,
+                                                agility=agility, pokemon_type=pokemon_type, healing=healing)
             elif pokemon_type == 'Water':
                 surge_mode = False
-                # TODO: Implement creation of a WaterPokemon
-                print ("TODO: Crear un WaterPokemon - ", end="")
-                # Printing the attributes for now
-                print (f"name: {pokemon_name}, level: {level}, strength: {strength}, defense: {defense}, hp: {hp}, total_hp: {total_hp}, agility: {agility}, surge_mode: {surge_mode} ")
+                pokemon_instance = WaterPokemon(name=pokemon_name, level=level, strength=strength,
+                                                defense=defense, hp=hp, total_hp=total_hp,
+                                                agility=agility, pokemon_type=pokemon_type, surge_mode=surge_mode)
             else: 
                 raise ValueError(f"Invalid Pokemon type: {pokemon_type}")
+            
+            pokemons.append(pokemon_instance)
 
-        # Reminder to implement the instance creation of Trainer
-        print (f"TODO: Crear instancia de Trainer con nombre {trainer_name} y su lista de pokemon {pokemons} (primero deberas anadir los Pokemon creados a esta lista)\n\n")
-        # Function is intended to return a Trainer instance in future development
-        return None
+        # Create an instance of Trainer with the created Pokemon
+        trainer_instance = Trainer(name=trainer_name, pokemon=pokemons)
+
+        return trainer_instance
 
     def parse_file(self, text: str):
         """
@@ -79,9 +82,84 @@ class PokemonSimulator:
         trainer1 = self.create_trainer_and_pokemons(info_trainer_1)
         trainer2 = self.create_trainer_and_pokemons(info_trainer_2)
 
-        return trainer1, trainer2
+        return [trainer1, trainer2]
+    
+    def attack(self, round_number, attacker, defender):    
+        
+        if int(round_number) % 2 != 0:
+            type_attack = attacker.pokemon_type.lower() + "_attack"
+        else:
+            type_attack = "basic_attack"
+        
+        # Realizar el ataque
+        damage = getattr(attacker, type_attack)(defender)
+        print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
 
+        # Manejar eventos especiales según el tipo de Pokémon
+        if attacker.pokemon_type == "Grass" and round_number % 2 != 0:
+            healing = attacker.heal()
+            print(f"-{attacker.name} is healing! (Healing: +{healing} HP: {attacker.hp})")
+        elif attacker.pokemon_type == "Fire" and round_number % 2 != 0 and not defender.hp <= 0:
+            attacker.embers(defender)
+            print(f"-{attacker.name} uses embers on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
+        
+    def print_round_info(self, round_number, p1, p2):
+        print(f"┌───────── Round {round_number} ─────────┐")
+        print(f"Fighter 1: {p1}")
+        print(f"Fighter 2: {p2}")
+        print("Actions:") 
+    def determine_attack_order(self, pokemon1, pokemon2):
+        """
+        Determina el orden de ataque basado en la agilidad de los Pokémon.
+        """
+        if pokemon1.agility >= pokemon2.agility:
+            attacker = pokemon1
+            defender = pokemon2
+        else:
+            attacker = pokemon2
+            defender = pokemon1
 
+        return attacker, defender
+    
+    def battle(self, trainer1, trainer2):
+        p1 = trainer1.select_first_pokemon()
+        p2 = trainer2.select_first_pokemon()
+
+        # Imprimir mensaje indicativo
+        print("=================================")
+        print(f"Battle between: {trainer1.name} vs {trainer2.name} begins!")
+        print(f"{trainer1.name} chooses {p1.name}")
+        print(f"{trainer2.name} chooses {p2.name}")
+        print("=================================")
+
+        round_number = 1
+        while True:
+            # Determinar cuál Pokémon ataca primero según la agilidad
+            attacker, defender = self.determine_attack_order(p1, p2)
+            while not p1.is_debilitated() and not p2.is_debilitated():
+                self.print_round_info(round_number, p1, p2)
+                self.attack(round_number, attacker, defender)
+                self.attack(round_number, defender, attacker)
+                round_number += 1
+
+            if p1.is_debilitated():
+                selected_pokemon = trainer1.select_next_pokemon(p2)
+                print(f"{trainer1.name} chooses {selected_pokemon.name}")
+                p1 = selected_pokemon
+                round_number = 1  # Reiniciar el número de rondas
+
+            elif p2.is_debilitated():
+                selected_pokemon = trainer2.select_next_pokemon(p1)
+                print(f"{trainer2.name} chooses {selected_pokemon.name}")
+                p2 = selected_pokemon
+                round_number = 1  # Reiniciar el número de rondas
+
+            if selected_pokemon == None:
+                print("=================================")
+                winner = trainer2 if trainer1.all_debilitated() else trainer1
+                print(f"End of the Battle: {winner.name} wins!")
+                print("=================================")
+                # Salir del bucle si no hay más Pokémon disponibles
 def main():
 
     """
@@ -92,9 +170,7 @@ def main():
         pokemon_text = f.read()
         simulator = PokemonSimulator()
         trainer1, trainer2 = simulator.parse_file(pokemon_text)
-        print ("""TODO: Implement the rest of the practice from here. Define classes and functions and
-        maintain the code structured, respecting the object-oriented programming paradigm""")
-
+        simulator.battle(trainer1, trainer2)
 
 if __name__ == '__main__':
     main()
