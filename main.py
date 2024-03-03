@@ -3,7 +3,6 @@ Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
 import sys
-import random
 from pokemon import *
 from trainer import Trainer
 import pandas as pd
