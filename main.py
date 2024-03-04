@@ -81,7 +81,7 @@ class PokemonSimulator:
         trainer1 = self.create_trainer_and_pokemons(info_trainer_1)
         trainer2 = self.create_trainer_and_pokemons(info_trainer_2)
 
-        return [trainer1, trainer2]
+        return trainer1, trainer2
     
     def attack(self, round_number, attacker, defender):    
         
@@ -132,8 +132,8 @@ class PokemonSimulator:
         print("=================================")
 
         round_number = 1
-        while True:
-            # Determinar cuál Pokémon ataca primero según la agilidad
+        no_acabado = True
+        while no_acabado:           # Determinar cuál Pokémon ataca primero según la agilidad
             attacker, defender = self.determine_attack_order(p1, p2)
             while not p1.is_debilitated() and not p2.is_debilitated():
                 self.print_round_info(round_number, p1, p2)
@@ -143,22 +143,33 @@ class PokemonSimulator:
 
             if p1.is_debilitated():
                 selected_pokemon = trainer1.select_next_pokemon(p2)
-                print(f"{trainer1.name} chooses {selected_pokemon.name}")
-                p1 = selected_pokemon
-                round_number = 1  # Reiniciar el número de rondas
+                if selected_pokemon is not None:
+                    print(f"{trainer1.name} chooses {selected_pokemon.name}")
+                    p1 = selected_pokemon
+                    round_number = 1  # Reiniciar el número de rondas
+                else:
+                    print("=================================")
+                    winner = trainer2
+                    print(f"End of the Battle: {winner.name} wins!")
+                    print("=================================")
+                    # Salir del bucle si no hay más Pokémon disponibles
+                    no_acabado = False
 
             elif p2.is_debilitated():
                 selected_pokemon = trainer2.select_next_pokemon(p1)
-                print(f"{trainer2.name} chooses {selected_pokemon.name}")
-                p2 = selected_pokemon
-                round_number = 1  # Reiniciar el número de rondas
+                if selected_pokemon is not None:
+                    print(f"{trainer2.name} chooses {selected_pokemon.name}")
+                    p2 = selected_pokemon
+                    round_number = 1  # Reiniciar el número de rondas
+                else:
+                    print("=================================")
+                    winner = trainer1
+                    print(f"End of the Battle: {winner.name} wins!")
+                    print("=================================")
+                    # Salir del bucle si no hay más Pokémon disponibles
+                    no_acabado = False
+        
 
-            if selected_pokemon == None:
-                print("=================================")
-                winner = trainer2 if trainer1.all_debilitated() else trainer1
-                print(f"End of the Battle: {winner.name} wins!")
-                print("=================================")
-                # Salir del bucle si no hay más Pokémon disponibles
 def main():
 
     """
