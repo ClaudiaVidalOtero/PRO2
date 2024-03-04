@@ -53,7 +53,7 @@ class Trainer:
         """
         next_pokemon = None
         for p in self.pokemon: 
-            if not p.is_debilitated:
+            if not p.is_debilitated():
                 if next_pokemon is None or (p.effectiveness(opponent), p.level) > (next_pokemon.effectiveness(opponent), next_pokemon.level):
                     next_pokemon = p
         return next_pokemon
