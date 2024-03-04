@@ -5,11 +5,21 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 import sys
 from pokemon import *
 from trainer import Trainer
-import pandas as pd
+import pandas
 
+class Estadistica:
+    def __init__(self, p_type, name, damage, opponent_type, healing):
+        self._p_type = p_type
+        self._name = name
+        self._damage = damage
+        self._opponent_type = opponent_type
+        self._healing = healing 
+
+lista_datos_pokemon = []
 class PokemonSimulator:
     """A class that simulates Pokemon trainers and their Pokemon."""
-
+    
+    
     def create_trainer_and_pokemons(self, text: str):
         """
         Creates a trainer and their pokemons from a given text input.
@@ -85,22 +95,46 @@ class PokemonSimulator:
     
     def attack(self, round_number, attacker, defender):    
         
-        if int(round_number) % 2 != 0:
-            type_attack = attacker.pokemon_type.lower() + "_attack"
+        # Manejar eventos especiales según el tipo de Pokémon
+        if int(round_number) % 2 != 0 and not defender.hp <= 0:
+
+            if attacker.pokemon_type == "Grass":
+
+                type_attack = "grass_attack"
+                damage = getattr(attacker, type_attack)(defender)
+                print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
+
+                healing = attacker.heal()
+
+                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, damage, defender.pokemon_type, attacker.healing ))
+                print(f"-{attacker.name} is healing! (Healing: +{healing} HP: {attacker.hp})")
+                            
+
+            elif attacker.pokemon_type == "Fire":
+            
+                type_attack = "fire_attack"
+                damage = getattr(attacker, type_attack)(defender)
+                print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
+                
+                damage_embers = attacker.embers(defender)
+
+                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage + damage_embers), defender.pokemon_type, None ))
+                
+                print(f"-{attacker.name} uses embers on {defender.name}! (Damage: -{damage_embers} HP: {defender.hp})")
+            
+            elif attacker.pokemon_type == "Water":
+
+                type_attack = "water_attack"
+                damage = getattr(attacker, type_attack)(defender)
+                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage), defender.pokemon_type, None ))
+                print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
+                
         else:
             type_attack = "basic_attack"
-        
-        # Realizar el ataque
-        damage = getattr(attacker, type_attack)(defender)
-        print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
-
-        # Manejar eventos especiales según el tipo de Pokémon
-        if attacker.pokemon_type == "Grass" and round_number % 2 != 0:
-            healing = attacker.heal()
-            print(f"-{attacker.name} is healing! (Healing: +{healing} HP: {attacker.hp})")
-        elif attacker.pokemon_type == "Fire" and round_number % 2 != 0 and not defender.hp <= 0:
-            attacker.embers(defender)
-            print(f"-{attacker.name} uses embers on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
+            damage = getattr(attacker, type_attack)(defender)
+            lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, damage, defender.pokemon_type, 0 ))
+            print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")        
+            
         
     def print_round_info(self, round_number, p1, p2):
         print(f"┌───────── Round {round_number} ─────────┐")
@@ -182,5 +216,55 @@ def main():
         trainer1, trainer2 = simulator.parse_file(pokemon_text)
         simulator.battle(trainer1, trainer2)
 
+    
+
+    
+
 if __name__ == '__main__':
     main()
+
+    data = pandas.DataFrame([
+        {"type": estadistica._p_type, "name": estadistica._name, "damage": estadistica._damage, 
+         "opponent_type": estadistica._opponent_type, "healing": estadistica._healing, 
+         "media_daño_segun_tipo": None, "media_curacion": None, "media_daño_individual": None}
+    for estadistica in lista_datos_pokemon ])
+    
+    nombres_unicos = data['name'].unique()
+    total_pokemon = len(nombres_unicos)
+
+    daño_total = data['damage'].sum()
+
+    # Para los Pokémon de tipo Fire
+    pokemon_fire = data[data['type'] == 'Fire']
+    nombres_unicos_fire = pokemon_fire['name'].unique()
+    total_daño_fire = pokemon_fire['damage'].sum() 
+    total_pokemon_fire = len(nombres_unicos_fire)  
+    media_daño_fire = total_daño_fire / total_pokemon_fire
+
+    # Para los Pokémon de tipo Water
+    pokemon_water = data[data['type'] == 'Water']
+    nombres_unicos_water = pokemon_water['name'].unique()
+    total_daño_water = pokemon_water['damage'].sum()
+    total_pokemon_water = len(nombres_unicos_water)
+    media_daño_water = total_daño_water / total_pokemon_water
+
+    # Para los Pokémon de tipo Grass
+    pokemon_grass = data[data['type'] == 'Grass']
+    #total_healing = pokemon_grass['healing'].sum()
+    nombres_unicos_grass = pokemon_grass['name'].unique()
+    total_daño_grass = pokemon_grass['damage'].sum()
+    total_pokemon_grass = len(nombres_unicos_grass)
+    media_daño_grass = total_daño_grass / total_pokemon_grass
+
+    #media_curacion_grass = total_healing / nombres_unicos_grass
+    media_daño_individual = daño_total / total_pokemon
+    #daño_por_oponente = data.groupby(['_name', '_type', 'opponent_type'])
+    
+    # Establecer las medias del daño para cada tipo de Pokémon en la nueva columna correspondiente
+    data.loc[data['type'] == 'Fire', 'media_daño_segun_tipo'] = media_daño_fire
+    data.loc[data['type'] == 'Water', 'media_daño_segun_tipo'] = media_daño_water
+    data.loc[data['type'] == 'Grass', 'media_daño_segun_tipo'] = media_daño_grass
+    data['media_daño_individual'] = media_daño_individual
+    #data['media_curacion']  = media_curacion_grass
+
+    print(data)
