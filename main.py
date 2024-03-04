@@ -229,6 +229,7 @@ if __name__ == '__main__':
     for estadistica in lista_datos_pokemon ])
     
 
+        #COSA 1
 
     group_col = "name"
     target_col = "damage"
@@ -277,40 +278,7 @@ if __name__ == '__main__':
 
 
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        #COSA 2
 
 
     nombres_unicos = data['name'].unique()
