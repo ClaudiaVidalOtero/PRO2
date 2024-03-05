@@ -78,3 +78,51 @@ print ("##############################\n")
 data_salary.sort_values(by=(target_col, "mean"), ascending=False, inplace=True)
 print (data_salary)
 
+
+
+#COSA 2
+#lo guardo aqui porsia
+
+    nombres_unicos = data['name'].unique()
+    total_pokemon = len(nombres_unicos)
+    daño_total = data['damage'].sum()
+
+    # Para los Pokémon de tipo Fire
+    pokemon_fire = data[data['type'] == 'Fire']
+    nombres_unicos_fire = pokemon_fire['name'].unique()
+    total_daño_fire = pokemon_fire['damage'].sum() 
+    total_pokemon_fire = len(nombres_unicos_fire)  
+    media_daño_fire = total_daño_fire / total_pokemon_fire
+
+    # Para los Pokémon de tipo Water
+    pokemon_water = data[data['type'] == 'Water']
+    nombres_unicos_water = pokemon_water['name'].unique()
+    total_daño_water = pokemon_water['damage'].sum()
+    total_pokemon_water = len(nombres_unicos_water)
+    media_daño_water = total_daño_water / total_pokemon_water
+
+    # Para los Pokémon de tipo Grass
+    
+    pokemon_grass = data[data['type'] == 'Grass']
+    pokemon_grass.loc[:, 'healing'] = pokemon_grass['healing'].astype(float)
+    total_healing = pokemon_grass['healing'].sum()
+    nombres_unicos_grass = pokemon_grass['name'].unique()
+    total_daño_grass = pokemon_grass['damage'].sum()
+    total_pokemon_grass = len(nombres_unicos_grass)
+    media_daño_grass = total_daño_grass / total_pokemon_grass
+
+    media_curacion = total_healing / total_pokemon
+    media_curacion_grass = total_healing / total_pokemon_grass
+
+    media_daño_individual = daño_total / total_pokemon
+    #daño_por_oponente = data.groupby(['_name', '_type', 'opponent_type'])
+    
+    # Establecer las medias del daño para cada tipo de Pokémon en la nueva columna correspondiente
+    data.loc[data['type'] == 'Fire', 'media_daño_segun_tipo'] = media_daño_fire
+    data.loc[data['type'] == 'Water', 'media_daño_segun_tipo'] = media_daño_water
+    data.loc[data['type'] == 'Grass', 'media_daño_segun_tipo'] = media_daño_grass
+    data['media_daño_individual'] = media_daño_individual
+    data['media_curacion']  = media_curacion
+    data.loc[data['type'] == 'Grass', 'media_curacion_grass'] = media_curacion_grass
+
+

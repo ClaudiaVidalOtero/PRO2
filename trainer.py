@@ -15,19 +15,25 @@ class Trainer:
         """
         self._name = name
         self._pokemon = pokemon
+
+
     @property
     def name(self):
         # Property (getter) para name
         return self._name
 
+
     @property
     def pokemon(self):
         # Property (getter) para pokemon
         return self._pokemon
+    
+
     @pokemon.setter
     def pokemon(self, value):
         #Setter para la lista de Pokemon
         self._pokemon = value
+
 
     def select_first_pokemon(self):
         """
@@ -41,6 +47,7 @@ class Trainer:
             if p.hp > 0:
                 return p
         return None
+    
 
     def select_next_pokemon(self, opponent):
         """
