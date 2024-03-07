@@ -7,8 +7,9 @@ from pokemon import *
 from trainer import Trainer
 import pandas
 
+
 class Estadistica:
-    def __init__(self, p_type, name, damage, opponent_type, healing):
+    def __init__(self, p_type:str, name:str, damage:float, opponent_type:str, healing:float):
         self._p_type = p_type
         self._name = name
         self._damage = damage
@@ -56,7 +57,7 @@ class PokemonSimulator:
                                                defense=defense, hp=hp, total_hp=total_hp,
                                                agility=agility, pokemon_type=pokemon_type, temperature=temperature)
             elif pokemon_type == 'Grass':
-                healing = details[6].split(': ')[1]
+                healing = float(details[6].split(': ')[1])
                 pokemon_instance = GrassPokemon(name=pokemon_name, level=level, strength=strength,
                                                 defense=defense, hp=hp, total_hp=total_hp,
                                                 agility=agility, pokemon_type=pokemon_type, healing=healing)
@@ -118,7 +119,7 @@ class PokemonSimulator:
                 
                 damage_embers = attacker.embers(defender)
 
-                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage + damage_embers), defender.pokemon_type, None ))
+                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage + damage_embers), defender.pokemon_type, 0 ))
                 
                 print(f"-{attacker.name} uses embers on {defender.name}! (Damage: -{damage_embers} HP: {defender.hp})")
             
@@ -126,7 +127,7 @@ class PokemonSimulator:
 
                 type_attack = "water_attack"
                 damage = getattr(attacker, type_attack)(defender)
-                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage), defender.pokemon_type, None ))
+                lista_datos_pokemon.append(Estadistica(attacker.pokemon_type, attacker.name, (damage), defender.pokemon_type, 0 ))
                 print(f"-{attacker.name} uses a {type_attack} on {defender.name}! (Damage: -{damage} HP: {defender.hp})")
                 
         else:
@@ -218,20 +219,70 @@ def main():
 
     
 
-    
-
 if __name__ == '__main__':
     main()
 
     data = pandas.DataFrame([
-        {"type": estadistica._p_type, "name": estadistica._name, "damage": estadistica._damage, 
+        {"name": estadistica._name, "type": estadistica._p_type, "media_daño_segun_tipo": None, "damage": estadistica._damage, 
          "opponent_type": estadistica._opponent_type, "healing": estadistica._healing, 
-         "media_daño_segun_tipo": None, "media_curacion": None, "media_daño_individual": None}
+          "media_curacion": None, "media_daño_individual": None, "media_curacion_grass": None}
     for estadistica in lista_datos_pokemon ])
     
+
+        #COSA 1
+
+    group_col = "name"
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("DAMAGE GROUPED BY NAME")
+    print (data_pokemon)
+
+
+
+    group_col = "type"
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+    
+    print("\n")
+    print ("DAMAGE GROUPED BY TYPE")
+    print (data_pokemon)
+
+
+
+    group_col = ["type","opponent_type"]
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("DAMAGE GROUPED BY (TYPE, OPPONENT_TYPE) ")
+    print (data_pokemon)
+
+
+    group_col = "name"
+    target_col = "healing"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("HEALING GROUPED BY NAME")
+    print (data_pokemon)
+
+
+    group_col = "type"
+    target_col = "healing"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+    print("\n")
+    print ("HEALING GROUPED BY TYPE")
+    print (data_pokemon)
+
+
+
+        #COSA 2
+
+
     nombres_unicos = data['name'].unique()
     total_pokemon = len(nombres_unicos)
-
     daño_total = data['damage'].sum()
 
     # Para los Pokémon de tipo Fire
@@ -249,14 +300,18 @@ if __name__ == '__main__':
     media_daño_water = total_daño_water / total_pokemon_water
 
     # Para los Pokémon de tipo Grass
+    
     pokemon_grass = data[data['type'] == 'Grass']
-    #total_healing = pokemon_grass['healing'].sum()
+    pokemon_grass.loc[:, 'healing'] = pokemon_grass['healing'].astype(float)
+    total_healing = pokemon_grass['healing'].sum()
     nombres_unicos_grass = pokemon_grass['name'].unique()
     total_daño_grass = pokemon_grass['damage'].sum()
     total_pokemon_grass = len(nombres_unicos_grass)
     media_daño_grass = total_daño_grass / total_pokemon_grass
 
-    #media_curacion_grass = total_healing / nombres_unicos_grass
+    media_curacion = total_healing / total_pokemon
+    media_curacion_grass = total_healing / total_pokemon_grass
+
     media_daño_individual = daño_total / total_pokemon
     #daño_por_oponente = data.groupby(['_name', '_type', 'opponent_type'])
     
@@ -265,6 +320,8 @@ if __name__ == '__main__':
     data.loc[data['type'] == 'Water', 'media_daño_segun_tipo'] = media_daño_water
     data.loc[data['type'] == 'Grass', 'media_daño_segun_tipo'] = media_daño_grass
     data['media_daño_individual'] = media_daño_individual
-    #data['media_curacion']  = media_curacion_grass
+    data['media_curacion']  = media_curacion
+    data.loc[data['type'] == 'Grass', 'media_curacion_grass'] = media_curacion_grass
 
-    print(data)
+
+    
