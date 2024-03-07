@@ -204,7 +204,13 @@ class PokemonSimulator:
             while not p1.is_debilitated() and not p2.is_debilitated(): # Mientras ningún Pokémon este debilitado
                 self.print_round_info(round_number, p1, p2) # Imprimimos el número de ronda y los datos de los pokemon
                 self.attack(round_number, attacker, defender) # Primero ataca el Pokémon más ágil y se defiende el oponente
+                if defender.is_debilitated():
+                    print(f"{defender.name} is debilitated")  # Mensaje cuando el defensor se debilita durante el ataque
+                    break  # Salir del bucle de la ronda si el defensor se debilita
                 self.attack(round_number, defender, attacker) # Ahora el Pokémon más ágil se defiende y lo ataca el defensor
+                if attacker.is_debilitated():
+                    print(f"{attacker.name} is debilitated")  # Mensaje cuando el atacante se debilita durante el ataque
+                    break  # Salir del bucle de la ronda si el atacante se debilita
                 round_number += 1 # Se suma el número de ronda mientras sigan los dos Pokemon con vida
 
             if p1.is_debilitated():
