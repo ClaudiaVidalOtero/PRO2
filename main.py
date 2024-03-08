@@ -174,7 +174,7 @@ class PokemonSimulator:
         self.print_battle_start(trainer1, trainer2, p1, p2)
 
         round_number = 1
-        while not self.is_battle_finished(p1, p2):
+        while not p1.is_debilitated() and not p2.is_debilitated():
             attacker, defender = self.determine_attack_order(p1, p2)
             self.execute_round(round_number, attacker, defender)
             round_number += 1
@@ -189,14 +189,20 @@ class PokemonSimulator:
                 round_number = 1
 
     def print_battle_start(self, trainer1, trainer2, p1, p2):
+        """
+        Imprime un mensaje indicativo al inicio de la batalla.
+
+        Parameters:
+            trainer1 (Trainer): El primer entrenador.
+            trainer2 (Trainer): El segundo entrenador.
+            p1 (Pokemon): El Pokémon seleccionado por el primer entrenador.
+            p2 (Pokemon): El Pokémon seleccionado por el segundo entrenador.
+        """
         print("=================================")
         print(f"Battle between: {trainer1.name} vs {trainer2.name} begins!")
         print(f"{trainer1.name} chooses {p1.name}")
         print(f"{trainer2.name} chooses {p2.name}")
         print("=================================")
-
-    def is_battle_finished(self, p1, p2):
-        return p1.is_debilitated() or p2.is_debilitated()
     
     def determine_attack_order(self, pokemon1, pokemon2):
         """
@@ -205,6 +211,8 @@ class PokemonSimulator:
         Parameters:
             pokemon1 (Pokemon): El Pokémon del trainer1.
             pokemon2 (Pokemon): El Pokémon del trainer2.
+        Returns:
+            Instancias del atacante y el defensor.
 
         """
         if pokemon1.agility >= pokemon2.agility:
@@ -217,6 +225,15 @@ class PokemonSimulator:
         return attacker, defender
 
     def execute_round(self, round_number, attacker, defender):
+        """
+        Ejecuta una ronda de la batalla, mostrando información de los Pokémon luchadores, 
+        realizando ataques y manejando debilitaciones.
+
+        Parameters:
+            round_number (int): El número de la ronda actual.
+            attacker (Pokemon): El Pokémon atacante.
+            defender (Pokemon): El Pokémon defensor.
+        """
         self.print_round_info(round_number, attacker, defender)
         self.attack(round_number, attacker, defender)
         if defender.is_debilitated():
@@ -227,6 +244,18 @@ class PokemonSimulator:
                 print(f"{attacker.name} is debilitated")
 
     def handle_debilitated_pokemon(self, losing_trainer, winning_trainer, debilitated_pokemon, opponent):
+        """
+        Maneja la situación en la que un Pokémon se debilita durante la batalla.
+    
+        Si el entrenador cuyo Pokémon se debilita tiene más Pokémon disponibles, selecciona el siguiente Pokémon
+        para continuar la batalla. De lo contrario, declara al otro entrenador como el ganador de la batalla.
+
+        Parameters:
+            losing_trainer (Trainer): El entrenador cuyo Pokémon se ha debilitado.
+            winning_trainer (Trainer): El entrenador que ha ganado la batalla.
+            debilitated_pokemon (Pokemon): El Pokémon debilitado.
+            opponent (Pokemon): El Pokémon del oponente.
+        """
         selected_pokemon = losing_trainer.select_next_pokemon(opponent)
         if selected_pokemon is not None:
             print(f"{losing_trainer.name} chooses {selected_pokemon.name}")
