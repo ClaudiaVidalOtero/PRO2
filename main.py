@@ -158,27 +158,8 @@ class PokemonSimulator:
         print(f"┌───────── Round {round_number} ─────────┐")
         print(f"Fighter 1: {p1}")
         print(f"Fighter 2: {p2}")
-        print("Actions:") 
+        print("Actions") 
 
-    def determine_attack_order(self, pokemon1, pokemon2):
-        """
-        Determina el orden de ataque basado en la agilidad de los Pokémon.
-
-        Parameters:
-            pokemon1 (Pokemon): El Pokémon del trainer1.
-            pokemon2 (Pokemon): El Pokémon del trainer2.
-
-    """
-        if pokemon1.agility >= pokemon2.agility:
-            attacker = pokemon1
-            defender = pokemon2
-        else:
-            attacker = pokemon2
-            defender = pokemon1
-
-        return attacker, defender
-    
-    
     def battle(self, trainer1, trainer2):
         """
         Simula una batalla entre dos entrenadores de Pokémon.
@@ -190,57 +171,100 @@ class PokemonSimulator:
         p1 = trainer1.select_first_pokemon()
         p2 = trainer2.select_first_pokemon()
 
-        # Imprimir mensaje indicativo
+        self.print_battle_start(trainer1, trainer2, p1, p2)
+
+        round_number = 1
+        while not p1.is_debilitated() and not p2.is_debilitated():
+            attacker, defender = self.determine_attack_order(p1, p2)
+            self.execute_round(round_number, attacker, defender)
+            round_number += 1
+
+            if p1.is_debilitated():
+                self.handle_debilitated_pokemon(trainer1, trainer2, p1, p2)
+                p1 = trainer1.selected_pokemon
+                round_number = 1
+            elif p2.is_debilitated():
+                self.handle_debilitated_pokemon(trainer2, trainer1, p2, p1)
+                p2 = trainer2.selected_pokemon
+                round_number = 1
+
+    def print_battle_start(self, trainer1, trainer2, p1, p2):
+        """
+        Imprime un mensaje indicativo al inicio de la batalla.
+
+        Parameters:
+            trainer1 (Trainer): El primer entrenador.
+            trainer2 (Trainer): El segundo entrenador.
+            p1 (Pokemon): El Pokémon seleccionado por el primer entrenador.
+            p2 (Pokemon): El Pokémon seleccionado por el segundo entrenador.
+        """
         print("=================================")
         print(f"Battle between: {trainer1.name} vs {trainer2.name} begins!")
         print(f"{trainer1.name} chooses {p1.name}")
         print(f"{trainer2.name} chooses {p2.name}")
         print("=================================")
+    
+    def determine_attack_order(self, pokemon1, pokemon2):
+        """
+        Determina el orden de ataque basado en la agilidad de los Pokémon.
 
-        round_number = 1
-        no_acabado = True
-        while no_acabado: 
-            attacker, defender = self.determine_attack_order(p1, p2) # Determinar qué Pokémon ataca primero según la agilidad
-            while not p1.is_debilitated() and not p2.is_debilitated(): # Mientras ningún Pokémon este debilitado
-                self.print_round_info(round_number, p1, p2) # Imprimimos el número de ronda y los datos de los pokemon
-                self.attack(round_number, attacker, defender) # Primero ataca el Pokémon más ágil y se defiende el oponente
-                if defender.is_debilitated():
-                    print(f"{defender.name} is debilitated")  # Mensaje cuando el defensor se debilita durante el ataque
-                    break  # Salir del bucle de la ronda si el defensor se debilita
-                self.attack(round_number, defender, attacker) # Ahora el Pokémon más ágil se defiende y lo ataca el defensor
-                if attacker.is_debilitated():
-                    print(f"{attacker.name} is debilitated")  # Mensaje cuando el atacante se debilita durante el ataque
-                    break  # Salir del bucle de la ronda si el atacante se debilita
-                round_number += 1 # Se suma el número de ronda mientras sigan los dos Pokemon con vida
+        Parameters:
+            pokemon1 (Pokemon): El Pokémon del trainer1.
+            pokemon2 (Pokemon): El Pokémon del trainer2.
+        Returns:
+            Instancias del atacante y el defensor.
 
-            if p1.is_debilitated():
-                selected_pokemon = trainer1.select_next_pokemon(p2)
-                if selected_pokemon is not None:
-                    print(f"{trainer1.name} chooses {selected_pokemon.name}")
-                    p1 = selected_pokemon
-                    round_number = 1  # Reiniciar el número de rondas
-                else:
-                    print("=================================")
-                    winner = trainer2
-                    print(f"End of the Battle: {winner.name} wins!")
-                    print("=================================")
-                    # Salir del bucle si no hay más Pokémon disponibles
-                    no_acabado = False
+        """
+        if pokemon1.agility >= pokemon2.agility:
+            attacker = pokemon1
+            defender = pokemon2
+        else:
+            attacker = pokemon2
+            defender = pokemon1
 
-            elif p2.is_debilitated():
-                selected_pokemon = trainer2.select_next_pokemon(p1)
-                if selected_pokemon is not None:
-                    print(f"{trainer2.name} chooses {selected_pokemon.name}")
-                    p2 = selected_pokemon
-                    round_number = 1  # Reiniciar el número de rondas
-                else:
-                    print("=================================")
-                    winner = trainer1
-                    print(f"End of the Battle: {winner.name} wins!")
-                    print("=================================")
-                    # Salir del bucle si no hay más Pokémon disponibles
-                    no_acabado = False
+        return attacker, defender
 
+    def execute_round(self, round_number, attacker, defender):
+        """
+        Ejecuta una ronda de la batalla, mostrando información de los Pokémon luchadores, 
+        realizando ataques y manejando debilitaciones.
+
+        Parameters:
+            round_number (int): El número de la ronda actual.
+            attacker (Pokemon): El Pokémon atacante.
+            defender (Pokemon): El Pokémon defensor.
+        """
+        self.print_round_info(round_number, attacker, defender)
+        self.attack(round_number, attacker, defender)
+        if defender.is_debilitated():
+            print(f"{defender.name} is debilitated")
+        else:
+            self.attack(round_number, defender, attacker)
+            if attacker.is_debilitated():
+                print(f"{attacker.name} is debilitated")
+
+    def handle_debilitated_pokemon(self, losing_trainer, winning_trainer, debilitated_pokemon, opponent):
+        """
+        Maneja la situación en la que un Pokémon se debilita durante la batalla.
+    
+        Si el entrenador cuyo Pokémon se debilita tiene más Pokémon disponibles, selecciona el siguiente Pokémon
+        para continuar la batalla. De lo contrario, declara al otro entrenador como el ganador de la batalla.
+
+        Parameters:
+            losing_trainer (Trainer): El entrenador cuyo Pokémon se ha debilitado.
+            winning_trainer (Trainer): El entrenador que ha ganado la batalla.
+            debilitated_pokemon (Pokemon): El Pokémon debilitado.
+            opponent (Pokemon): El Pokémon del oponente.
+        """
+        selected_pokemon = losing_trainer.select_next_pokemon(opponent)
+        if selected_pokemon is not None:
+            print(f"{losing_trainer.name} chooses {selected_pokemon.name}")
+            losing_trainer.selected_pokemon = selected_pokemon
+        else:
+            print("=================================")
+            print(f"End of the Battle: {winning_trainer.name} wins!")
+            print("=================================")
+    
 class Estadistica:
     """
     Clase para representar estadísticas de un pokémon en combate.
