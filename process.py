@@ -2,7 +2,6 @@
 Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
-import time
 
 class Process:
     def __init__(self, pid, user_id, resource_type, execution_time, start_time):
@@ -10,11 +9,11 @@ class Process:
         Inicializa la clase Process y se le asignan sus atributos.
 
         Parameters:
-            pid
-            user_id
-            resource_type
-            execution_time
-            start_time
+            pid (str): Identificador del proceso.
+            user_id (str): Identificador del usuario.
+            resource_type (str): Tipo de recurso (cpu / gpu).
+            execution_time (str): Tiempo estimado de ejecución (long / short).
+            start_time (int): Tiempo de inicio de ejecución.
         """
         self._pid = pid
         self._user_id = user_id
