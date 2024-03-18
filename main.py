@@ -3,13 +3,13 @@ Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
 import sys
-from queue import Queue
+from array_queue import ArrayQueue
 from process import Process
 from queue_handler import QueueHandler
 
 class QueueSimulator:
     def create_cola_registro(self, text: str):
-        cola_registro = Queue()
+        cola_registro = ArrayQueue()
         lines = text.split("\t")
 
         for line in lines:
@@ -22,9 +22,8 @@ class QueueSimulator:
                 execution_time = parts[3]
                 start_time = int(parts[4])
                 # Crear un proceso y agregarlo a la cola de registro
-                proceso = Process(pid=pid, user_id=user_id, resource_type = resource_type, execution_time=execution_time, start_time=start_time)
+                proceso = Process(pid, user_id, resource_type, execution_time, start_time)
                 cola_registro.append(proceso)
-
         return cola_registro
 
 
@@ -42,3 +41,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
