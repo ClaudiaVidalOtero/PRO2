@@ -4,7 +4,7 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 """
 
 class Process:
-    def __init__(self, pid, user_id, resource_type, execution_time, start_time):
+    def __init__(self, pid, user_id, resource_type, estimated_execution_time, execution_time, start_time):
         """
         Inicializa la clase Process y se le asignan sus atributos.
 
@@ -18,7 +18,9 @@ class Process:
         self._pid = pid
         self._user_id = user_id
         self._resource_type = resource_type
+        self._estimated_execution_time = estimated_execution_time
         self._execution_time = execution_time
+
         self._start_time = start_time
 
     @property

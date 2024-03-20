@@ -20,11 +20,12 @@ class QueueSimulator:
                 user_id = parts[1]
                 resource_type = parts[2]
                 execution_time = parts[3]
-                start_time = int(parts[4])
+                estimated_execution_time = int(parts[4])
                 # Crear un proceso y agregarlo a la cola de registro
-                proceso = Process(pid, user_id, resource_type, execution_time, start_time)
+                proceso = Process(pid, user_id, resource_type, execution_time, estimated_execution_time)
                 cola_registro.append(proceso)
         return cola_registro
+        
 
 
 def main():
