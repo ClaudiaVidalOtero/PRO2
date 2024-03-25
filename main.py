@@ -5,7 +5,7 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 import sys
 from array_queue import ArrayQueue
 from process import Process
-from queue_handler import QueueHandler
+from queue_handler import Usuario
 
 class QueueSimulator:
     def create_cola_registro(self, text: str):
@@ -19,14 +19,132 @@ class QueueSimulator:
                 pid = parts[0]
                 user_id = parts[1]
                 resource_type = parts[2]
-                execution_time = parts[3]
-                estimated_execution_time = int(parts[4])
+                estimated_execution_time = parts[3]
+                execution_time = int(parts[4])
+                start_time = None
                 # Crear un proceso y agregarlo a la cola de registro
-                proceso = Process(pid, user_id, resource_type, execution_time, estimated_execution_time)
+                proceso = Process(pid, user_id, resource_type, estimated_execution_time, execution_time, start_time)
                 cola_registro.append(proceso)
         return cola_registro
         
+class ProcessManager:
+    def __init__(self, cola_registro: ArrayQueue[Process]):
 
+        self._cola_registro = cola_registro
+
+        
+                
+    def ejecucion(self, cola_registro):
+        cola_ejecucion = ArrayQueue()
+        cola_finalizados = ArrayQueue()
+        cola_usuarios_penalizados = ArrayQueue()
+        cola_gpu_short = ArrayQueue()
+        cola_gpu_long = ArrayQueue()
+        cola_cpu_short = ArrayQueue()
+        cola_cpu_long = ArrayQueue()
+        time = 1 #eso mejor bucle akdana
+        for proceso in self.cola_registro:
+
+            if proceso.resource_type == "gpu" and proceso.estimated_execution_time == "short":
+                cola_registro.dequeue(proceso)
+                cola_gpu_short.enqueue(proceso)
+                
+            elif proceso.resource_type == "gpu" and proceso.estimated_execution_time == "long":
+                cola_registro.dequeue(proceso)
+                cola_gpu_long.enqueue(proceso)
+
+            elif proceso.resource_type == "cpu" and proceso.estimated_execution_time == "short":
+                cola_registro.dequeue(proceso)
+                cola_cpu_short.enqueue(proceso)
+
+            elif proceso.resource_type == "cpu" and proceso.estimated_execution_time == "long":
+                cola_registro.dequeue(proceso)
+                cola_cpu_long.enqueue(proceso)
+
+            else:
+                print("supererror slaynt sach")
+            if not self.usuario_penalizado(proceso.user_id, cola_usuarios_penalizados):
+                self.agregar_proceso_ejecucion(proceso,cola_ejecucion, cola_finalizados, cola_usuarios_penalizados, time)
+            else:
+                subcola = f"cola_{proceso.resource_type}_{proceso.estimated_execution_time}"
+                subcola.enqueue(proceso)
+            self.control_penalizacion_usuarios(cola_usuarios_penalizados)
+
+            
+            
+            
+
+    def agregar_proceso_ejecucion(self, proceso_a_añadir, cola_ejecucion, cola_finalizados,cola_usuarios_penalizados, time):
+        """Comprueba que no haya ningún proceso de su misma cola, y si no hay, o este ya cumplió su tiempo añade el nuevo"""
+
+        subcola = f"cola_{proceso_a_añadir.resource_type}_{proceso_a_añadir.estimated_execution_time}"
+        proceso_a_añadir.start_time = time
+        cola_revisada = ArrayQueue()
+        for proceso in cola_ejecucion:
+
+            subcola2 = f"cola_{proceso.resource_type}_{proceso.estimated_execution_time}"
+
+
+            if (subcola == subcola2) and ((time - proceso.start_time) == proceso.estimated_execution_time): 
+                cola_ejecucion.dequeue(proceso)
+                cola_finalizados.enqueue(proceso)
+                if proceso.estimated_execution_time == "short" and proceso.execution_time > 5:
+                    self.añadir_usuario_cola(proceso.id_usuario, cola_usuarios_penalizados)
+                else: 
+                    pass
+                print(f"El proceso existente de la subcola {subcola} ha finalizado su ejecución")
+                cola_ejecucion.enqueue(proceso_a_añadir)
+                print(f"Añadido un nuevo proceso de la subcola: {subcola}.")
+                print(proceso_a_añadir.start_time)
+                
+            
+            else: 
+                cola_revisada.enqueue(proceso)
+
+        cola_ejecucion = cola_revisada
+        
+        return cola_ejecucion
+
+    def usuario_penalizado(self,id_usuario, cola_usuarios_penalizados):
+        """Comprueba si un usuario está penalizado"""
+        usuario_en_cola = None
+
+        for usuario in self.cola_usuarios_penalizados:
+            if usuario.id_usuario == id_usuario:
+                usuario_en_cola = usuario
+                return True
+            else:
+                return False
+
+    def añadir_usuario_cola(self, id_usuario, cola_usuarios_penalizados):
+        """
+        Revisa si un usuario está en la cola de penalizados, si no simplemente lo añade con penalización 5
+        """
+        nuevo_usuario = Usuario(id_usuario, 5)
+        self.cola_usuarios_penalizados.append(nuevo_usuario)
+
+    def control_penalizacion_usuarios(self, cola_usuarios_penalizados):
+        """
+        Revisa todos los usuarios y elimina aquellos que ya cumplieron su penalizacióm, para los demás les resta una ud de tiempo a su penalizacion.
+        """
+
+        cola_penalizados_revisada = ArrayQueue()
+
+        for usuario in cola_usuarios_penalizados:
+
+            usuario.reducir_penalizacion
+
+            if usuario.penalizacion == 0:
+                pass
+
+            else:
+                cola_penalizados_revisada.enqueue(usuario)
+
+        cola_usuarios_penalizados = cola_penalizados_revisada
+
+        return cola_usuarios_penalizados 
+
+ 
 
 def main():
     
@@ -36,8 +154,10 @@ def main():
 
     with open(sys.argv[1]) as f:
         process_text = f.read()
-        simulator = QueueSimulator()
-
+        simulator = ProcessManager()
+        lector_archivos = QueueSimulator()
+        cola_registro = lector_archivos.create_cola_registro(process_text)
+        simulator.ejecucion(cola_registro)
 
 
 if __name__ == "__main__":
