@@ -51,6 +51,15 @@ class Process:
         self._resource_type = value
 
     @property
+    def estimated_execution_time(self):
+        #Property (getter) para estimated execution time
+        return self._estimated_execution_time
+    @estimated_execution_time.setter
+    def estimated_execution_time(self, value):
+        #setter para estimated_execution_time
+        self._estimated_execution_time = value
+
+    @property
     def execution_time(self):
         # Property (getter) para execution_time
         return self._execution_time
@@ -67,4 +76,6 @@ class Process:
     def start_time(self, value):
         # Setter para start_time
         self._start_time = value
+
+        
     

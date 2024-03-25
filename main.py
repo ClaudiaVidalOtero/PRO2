@@ -10,7 +10,7 @@ from queue_handler import Usuario
 class QueueSimulator:
     def create_cola_registro(self, text: str):
         cola_registro = ArrayQueue()
-        lines = text.split("\t")
+        lines = text.split("\n")
 
         for line in lines:
             parts = line.split()  # Dividir la línea en partes separadas por espacios
@@ -22,53 +22,67 @@ class QueueSimulator:
                 estimated_execution_time = parts[3]
                 execution_time = int(parts[4])
                 start_time = None
+
                 # Crear un proceso y agregarlo a la cola de registro
                 proceso = Process(pid, user_id, resource_type, estimated_execution_time, execution_time, start_time)
-                cola_registro.append(proceso)
+                cola_registro.enqueue(proceso)
         return cola_registro
         
 class ProcessManager:
-    def __init__(self, cola_registro: ArrayQueue[Process]):
 
-        self._cola_registro = cola_registro
-
-        
-                
     def ejecucion(self, cola_registro):
         cola_ejecucion = ArrayQueue()
+
         cola_finalizados = ArrayQueue()
+
         cola_usuarios_penalizados = ArrayQueue()
+
         cola_gpu_short = ArrayQueue()
         cola_gpu_long = ArrayQueue()
         cola_cpu_short = ArrayQueue()
         cola_cpu_long = ArrayQueue()
-        time = 1 #eso mejor bucle akdana
-        for proceso in self.cola_registro:
+
+        time = 1 
+        print("pan")
+        #while not cola_registro.is_empty():
+        #    proceso = cola_registro.first()
+        #    print(proceso.pid, proceso.user_id, proceso.resource_type, proceso.estimated_execution_time, proceso.execution_time, proceso.start_time)
+        #    cola_registro.dequeue()
+            
+        while not (cola_registro.is_empty() and cola_ejecucion.is_empty() and cola_cpu_long.is_empty() and cola_cpu_short.is_empty() and cola_gpu_long.is_empty() and cola_gpu_short.is_empty()):
+        # Tu código aquí
+
+            proceso = cola_registro.first()
 
             if proceso.resource_type == "gpu" and proceso.estimated_execution_time == "short":
-                cola_registro.dequeue(proceso)
+                print("pan")
+                cola_registro.dequeue()
                 cola_gpu_short.enqueue(proceso)
+                print("pan")
                 
             elif proceso.resource_type == "gpu" and proceso.estimated_execution_time == "long":
-                cola_registro.dequeue(proceso)
+                cola_registro.dequeue()
                 cola_gpu_long.enqueue(proceso)
 
             elif proceso.resource_type == "cpu" and proceso.estimated_execution_time == "short":
-                cola_registro.dequeue(proceso)
+                cola_registro.dequeue()
                 cola_cpu_short.enqueue(proceso)
 
             elif proceso.resource_type == "cpu" and proceso.estimated_execution_time == "long":
-                cola_registro.dequeue(proceso)
+                cola_registro.dequeue()
                 cola_cpu_long.enqueue(proceso)
 
             else:
                 print("supererror slaynt sach")
+
             if not self.usuario_penalizado(proceso.user_id, cola_usuarios_penalizados):
+                print("pan")
                 self.agregar_proceso_ejecucion(proceso,cola_ejecucion, cola_finalizados, cola_usuarios_penalizados, time)
             else:
                 subcola = f"cola_{proceso.resource_type}_{proceso.estimated_execution_time}"
                 subcola.enqueue(proceso)
             self.control_penalizacion_usuarios(cola_usuarios_penalizados)
+            time += 1
 
             
             
@@ -86,7 +100,7 @@ class ProcessManager:
 
 
             if (subcola == subcola2) and ((time - proceso.start_time) == proceso.estimated_execution_time): 
-                cola_ejecucion.dequeue(proceso)
+                cola_ejecucion.dequeue()
                 cola_finalizados.enqueue(proceso)
                 if proceso.estimated_execution_time == "short" and proceso.execution_time > 5:
                     self.añadir_usuario_cola(proceso.id_usuario, cola_usuarios_penalizados)
@@ -109,7 +123,7 @@ class ProcessManager:
         """Comprueba si un usuario está penalizado"""
         usuario_en_cola = None
 
-        for usuario in self.cola_usuarios_penalizados:
+        for usuario in cola_usuarios_penalizados:
             if usuario.id_usuario == id_usuario:
                 usuario_en_cola = usuario
                 return True
@@ -121,7 +135,7 @@ class ProcessManager:
         Revisa si un usuario está en la cola de penalizados, si no simplemente lo añade con penalización 5
         """
         nuevo_usuario = Usuario(id_usuario, 5)
-        self.cola_usuarios_penalizados.append(nuevo_usuario)
+        cola_usuarios_penalizados.enqueue(nuevo_usuario)
 
     def control_penalizacion_usuarios(self, cola_usuarios_penalizados):
         """
@@ -154,9 +168,10 @@ def main():
 
     with open(sys.argv[1]) as f:
         process_text = f.read()
-        simulator = ProcessManager()
         lector_archivos = QueueSimulator()
         cola_registro = lector_archivos.create_cola_registro(process_text)
+        simulator = ProcessManager()
+
         simulator.ejecucion(cola_registro)
 
 
