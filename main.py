@@ -84,7 +84,7 @@ class ProcessManager:
             self.control_penalizacion_usuarios(cola_usuarios_penalizados)
             time += 1
 
-            
+           
             
             
 
@@ -94,7 +94,9 @@ class ProcessManager:
         subcola = f"cola_{proceso_a_añadir.resource_type}_{proceso_a_añadir.estimated_execution_time}"
         proceso_a_añadir.start_time = time
         cola_revisada = ArrayQueue()
-        for proceso in cola_ejecucion:
+
+        while not cola_ejecucion.is_empty():
+            proceso = cola_ejecucion.first()
 
             subcola2 = f"cola_{proceso.resource_type}_{proceso.estimated_execution_time}"
 
@@ -102,17 +104,18 @@ class ProcessManager:
             if (subcola == subcola2) and ((time - proceso.start_time) == proceso.estimated_execution_time): 
                 cola_ejecucion.dequeue()
                 cola_finalizados.enqueue(proceso)
+                print(f"El proceso existente de la subcola {subcola} ha finalizado su ejecución")
+                cola_revisada.enqueue(proceso_a_añadir)
+                print(f"Añadido un nuevo proceso de la subcola: {subcola}.")
+                print(proceso_a_añadir.start_time)
                 if proceso.estimated_execution_time == "short" and proceso.execution_time > 5:
                     self.añadir_usuario_cola(proceso.id_usuario, cola_usuarios_penalizados)
                 else: 
                     pass
-                print(f"El proceso existente de la subcola {subcola} ha finalizado su ejecución")
-                cola_ejecucion.enqueue(proceso_a_añadir)
-                print(f"Añadido un nuevo proceso de la subcola: {subcola}.")
-                print(proceso_a_añadir.start_time)
                 
             
             else: 
+                cola_ejecucion.dequeue()
                 cola_revisada.enqueue(proceso)
 
         cola_ejecucion = cola_revisada
@@ -122,13 +125,21 @@ class ProcessManager:
     def usuario_penalizado(self,id_usuario, cola_usuarios_penalizados):
         """Comprueba si un usuario está penalizado"""
         usuario_en_cola = None
+        cola_revisada = ArrayQueue()
 
-        for usuario in cola_usuarios_penalizados:
+        while not cola_usuarios_penalizados.is_empty():
+            usuario = cola_usuarios_penalizados.first()
             if usuario.id_usuario == id_usuario:
                 usuario_en_cola = usuario
+                cola_usuarios_penalizados.dequeue()
+                cola_revisada.enqueue(usuario)
                 return True
             else:
-                return False
+                cola_usuarios_penalizados.dequeue()
+                cola_revisada.enqueue(usuario)
+        cola_usuarios_penalizados = cola_revisada
+        return False
+            
 
     def añadir_usuario_cola(self, id_usuario, cola_usuarios_penalizados):
         """
@@ -144,7 +155,8 @@ class ProcessManager:
 
         cola_penalizados_revisada = ArrayQueue()
 
-        for usuario in cola_usuarios_penalizados:
+        while not cola_usuarios_penalizados.is_empty():
+            usuario = cola_usuarios_penalizados.first()
 
             usuario.reducir_penalizacion
 
