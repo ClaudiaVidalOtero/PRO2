@@ -7,6 +7,7 @@ import pandas
 from pokemon import *
 from trainer import Trainer
 
+<<<<<<< Updated upstream
 
 class PokemonSimulator:
     
@@ -338,6 +339,132 @@ def estadisticas(self):
     group_col = "name"
     target_col = "damage"
     data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+=======
+class QueueSimulator:
+    def __init__(self):
+        self.cola_registro = None
+        self.process_manager = ProcessManager()
+        self.current_time = 0  # Inicializar el contador de tiempo aquí
+
+    def create_cola_registro(self, text: str):
+        cola_registro = ArrayQueue()
+        lines = text.split("\n")
+
+        for line in lines:
+            parts = line.split()  # Dividir la línea en partes separadas por espacios
+            if len(parts) == 5:  # Asegurarse de que haya 5 partes en la línea
+                # Extraer los atributos del proceso
+                pid = parts[0]
+                user_id = parts[1]
+                resource_type = parts[2]
+                estimated_execution_time = parts[3]
+                execution_time = int(parts[4])
+                start_time = None
+
+                # Crear un proceso y agregarlo a la cola de registro
+                proceso = Process(pid, user_id, resource_type, estimated_execution_time, execution_time, start_time)
+                cola_registro.enqueue(proceso)
+        return cola_registro
+    
+    def execute_simulation(self, text: str):
+        self.cola_registro = self.create_cola_registro(text)
+        while not self.is_simulation_finished():
+            self.current_time += 1
+
+            if not self.cola_registro.is_empty():
+                self.add_process_to_queue()
+
+            self.process_manager.execute_running_processes(self.current_time)
+
+    def is_simulation_finished(self):
+        return self.cola_registro.is_empty() and self.process_manager.are_queues_empty()
+
+    def add_process_to_queue(self):
+        process = self.cola_registro.first()
+        process.start_time = self.current_time
+        self.process_manager.execute_process(process)
+        self.cola_registro.dequeue()
+        print(f"Proceso añadido a cola de ejecución: {self.current_time} {process.pid} {process.user_id} {process.resource_type} {process.estimated_execution_time}")
+    
+class ProcessManager:
+    def __init__(self):
+        self.cola_ejecucion = ArrayQueue()
+        self.cola_finalizados = ArrayQueue()
+        self.cola_usuarios_penalizados = ArrayQueue()
+        self.cola_gpu_short = ArrayQueue()
+        self.cola_gpu_long = ArrayQueue()
+        self.cola_cpu_short = ArrayQueue()
+        self.cola_cpu_long = ArrayQueue()
+        self.usuarios_penalizados = set()  # Conjunto para rastrear usuarios penalizados
+
+    def execute_running_processes(self, current_time):  # Aceptar current_time como parámetro
+        while not self.cola_ejecucion.is_empty() or not self.cola_gpu_short.is_empty() or not self.cola_gpu_long.is_empty() \
+                or not self.cola_cpu_short.is_empty() or not self.cola_cpu_long.is_empty():
+            self.process_next(current_time)  # Pasar current_time a process_next
+
+    def process_next(self, current_time):
+        while not all(queue.is_empty() for queue in [self.cola_cpu_short, self.cola_cpu_long, self.cola_gpu_short, self.cola_gpu_long, self.cola_ejecucion]):
+            # Procesar elementos de la cola de CPU de corto plazo
+            if not self.cola_cpu_short.is_empty():
+                self.execute_process(self.cola_cpu_short.dequeue())
+
+            # Procesar elementos de la cola de CPU de largo plazo
+            elif not self.cola_cpu_long.is_empty():
+                self.execute_process(self.cola_cpu_long.dequeue())
+
+            # Procesar elementos de la cola de GPU de corto plazo
+            elif not self.cola_gpu_short.is_empty():
+                self.execute_process(self.cola_gpu_short.dequeue())
+
+            # Procesar elementos de la cola de GPU de largo plazo
+            elif not self.cola_gpu_long.is_empty():
+                self.execute_process(self.cola_gpu_long.dequeue())
+
+            # Si no hay procesos en las colas de CPU y GPU, pero hay procesos en ejecución
+            else:
+                process = self.cola_ejecucion.first()
+                if current_time - process.start_time >= process.execution_time:
+                    self.finish_process(self.cola_ejecucion.dequeue())
+                else:
+                    # Aquí podrías aplicar alguna lógica adicional si es necesario
+                    # Por ejemplo, verificar si algún proceso debe ser penalizado
+                    self.process_penalty(process, current_time)
+
+
+
+    def execute_process(self, process):
+        self.cola_ejecucion.enqueue(process)
+        print(f"Iniciando ejecución del proceso {process.pid}")
+
+    def finish_process(self, process):
+        self.cola_finalizados.enqueue(process)
+        print(f"Proceso terminado: {self.current_time} {process.pid} {process.user_id} {process.resource_type} {process.estimated_execution_time} {process.start_time} {process.execution_time}")
+
+    def process_penalty(self, process, current_time):
+        if process.estimated_execution_time == "short" and process.execution_time > 5:
+            # Penalizar al usuario solo si el proceso es "short" y supera el tiempo estimado
+            self.add_user_penalty(process.user_id)
+            print(f"Penalización activa: {current_time} {process.user_id}")
+        else:
+            # Si no se cumple la condición, ejecutar el proceso normalmente
+            self.execute_process(process)
+
+
+
+    def add_user_penalty(self, user_id):
+        if user_id not in self.usuarios_penalizados:
+            nuevo_usuario = Usuario(user_id, 5)
+            self.cola_usuarios_penalizados.enqueue(nuevo_usuario)
+            self.usuarios_penalizados.add(user_id)
+        else:
+            usuario = self.cola_usuarios_penalizados.find_user(user_id)
+            usuario.penalizacion += 5
+            print(f"Debido al incumplimiento de las normas, la penalización del usuario {usuario.id_usuario} se ha incrementado a {usuario.penalizacion} ud de tiempo.")
+
+    def are_queues_empty(self):
+        return self.cola_ejecucion.is_empty() and self.cola_gpu_short.is_empty() and self.cola_gpu_long.is_empty() \
+               and self.cola_cpu_short.is_empty() and self.cola_cpu_long.is_empty()
+>>>>>>> Stashed changes
 
     print("\n")
     print ("DAMAGE GROUPED BY NAME")
@@ -390,6 +517,7 @@ def main():
     """
 
     with open(sys.argv[1]) as f:
+<<<<<<< Updated upstream
         pokemon_text = f.read()
         simulator = PokemonSimulator()
         trainer1, trainer2 = simulator.parse_file(pokemon_text)
@@ -397,6 +525,11 @@ def main():
         estadisticas(simulator)
 
     
+=======
+        process_text = f.read()
+        simulator = QueueSimulator()
+        simulator.execute_simulation(process_text)
+>>>>>>> Stashed changes
 
 if __name__ == '__main__':
     main()
