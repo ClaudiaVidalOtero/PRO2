@@ -7,7 +7,7 @@ from array_ordered_positional_list import ArrayOrderedPositionalList as ArrayOrd
 from linked_ordered_positional_list import LinkedOrderedPositionalList as LinkedOrderedPositionalList 
 
 class Movie(ABC):
-    def __init__(self, director, title, year, rating):
+    def __init__(self, director: str, title: str, year: int, rating: int):
         """
         Inicializa la clase Movie y se le asignan sus atributos.
         Parameters:
@@ -47,49 +47,24 @@ class Movie(ABC):
             raise ValueError("Rating must be between 1 and 10.")
 
     def __str__(self):
-        return f"{self.title} ({self.year}) - Dirigida por: {self.director}, Puntuación: {self.rating}"
+        return f"{self.director} ({self.year}) {self.title} - Rating: {self.rating}"
+
     
     def __lt__(self, other):
-        if self.title != other.title:
-            return self.title < other.title
-        elif self.director != other.director:
+        """ Comprueba si el objeto actual es menor que otro objeto.
+
+        Parameters:
+            other: Otro objeto con el que se va a comparar.
+        Returns:
+            bool: True si el objeto actual es menor que el otro objeto, False de lo contrario.
+        """
+        if self.director != other.director:
             return self.director < other.director
         elif self.year != other.year:
             return self.year < other.year
-        else:
-            return self.rating < other.rating
+        elif self.title != other.title:
+            return self.title < other.title
 
-    def __eq__(self, other):
-        return (self.title, self.director, self.year, self.rating) == (other.title, other.director, other.year, other.rating)
-    
     def __le__(self, other):
+        """ Comprueba si el objeto actual es menor o igual que otro objeto."""
         return self == other or self < other
-
-    def __gt__(self, other):
-        return not (self < other or self == other)
-
-    def __ge__(self, other):
-        return not (self < other)
-
-    def __ne__(self, other):
-        return not (self == other)
-    
-    def delete_duplicates(self, movies):
-        unique_movies = LinkedOrderedPositionalList() 
-        unique_titles = {} # Creamos un diccionario para almacenar las películas únicas basadas en el título y el director.
-
-        for movie in movies:
-            # Verificamos si el título y director de la película actual ya están en el diccionario de películas únicas.
-            if (movie.title, movie.director) in unique_titles:
-                # Si ya hay una película con el mismo título y director, comparamos los años de estreno.
-                existing_movie = unique_titles[(movie.title, movie.director)]
-                if movie.year > existing_movie.year:
-                    unique_titles[(movie.title, movie.director)] = movie
-            else:
-                unique_titles[(movie.title, movie.director)] = movie
-        
-        # Agregamos las películas únicas del diccionario a la lista de películas únicas.
-        for movie in unique_titles.values():
-            unique_movies.add(movie)
-
-        return unique_movies

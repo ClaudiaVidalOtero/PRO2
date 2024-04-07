@@ -9,7 +9,7 @@ from linked_ordered_positional_list import LinkedOrderedPositionalList as Linked
 
 class MovieSimulator:
     
-    """Una clase que simula la gestión de un catálogo de películas."""
+    """Una clase que simula la gestión de un catálogo de películas de una plataforma de streaming.."""
     
     def load_movies_from_file(self, text: str):
         
@@ -42,22 +42,48 @@ class MovieSimulator:
                 print(f"Error: línea mal formateada - {line}")
 
         return movies
-        
-    def show_all_movies(self, movies):
-        """ Lista todas las películas de la lista posicional ordenada.
+    
+    def delete_duplicates(self, movies):
+        """ Elimina las películas duplicadas de la lista de películas dada, manteniendo solo la versión más reciente de cada película.
 
         Parameters:
-            movies (ArrayOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (LinkedOrderedPositionalList): Una lista de películas.
+        Returns:
+            LinkedOrderedPositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
+    """
+        unique_movies = LinkedOrderedPositionalList() 
+        unique_titles = {} # Creamos un diccionario para almacenar las películas únicas basadas en el título y el director.
+
+        for movie in movies:
+            # Verificamos si el título y director de la película actual ya están en el diccionario de películas únicas.
+            if (movie.title, movie.director) in unique_titles:
+                # Si ya hay una película con el mismo título y director, comparamos los años de estreno.
+                existing_movie = unique_titles[(movie.title, movie.director)]
+                if movie.year > existing_movie.year:
+                    unique_titles[(movie.title, movie.director)] = movie
+            else:
+                unique_titles[(movie.title, movie.director)] = movie
+        
+        # Agregamos las películas únicas del diccionario a la lista de películas únicas.
+        for movie in unique_titles.values():
+            unique_movies.add(movie)
+
+        return unique_movies
+    
+    def show_all_movies(self, movies):
+        """ Imprime todas las películas de la lista posicional ordenada.
+
+        Parameters:
+            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
         """
         for movie in movies:
-            print(f"{movie.title} ({movie.year}) - Dirigida por: {movie.director} - Rating: {movie.rating}")
+            print(f"{movie.director} ({movie.year}) {movie.title} - Rating: {movie.rating}")
 
-           
     def show_movies_by_director(self, movies, director):
-        """ Lista las películas de la lista posicional ordenada dirigidas por un director específico.
+        """ Imprime las películas de la lista posicional ordenada dirigidas por un director específico.
 
         Parameters:
-            movies (ArrayOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
             director (str): El nombre del director/a.
         """
         for movie in movies:
@@ -65,10 +91,10 @@ class MovieSimulator:
                 print(f"{movie.title} ({movie.year}) - Rating: {movie.rating}")
 
     def show_movies_by_year(self, movies, year):
-        """ Lista las películas de la lista posicional ordenada estrenadas en un año específico.
+        """ Imprime las películas de la lista posicional ordenada estrenadas en un año específico.
 
         Parameters:
-            movies (ArrayOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
             year (int): El año de estreno.
         """
         for movie in movies:
@@ -88,7 +114,7 @@ class MovieSimulator:
         """ Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
         
         Parameters:
-            movies (ArrayOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
     """
         while True:
             self.show_menu()
@@ -110,7 +136,17 @@ class MovieSimulator:
                 break
             else:
                 print("Opción no válida. Por favor, seleccione una opción válida.")
+                
+    def save_movies_to_file(self, movies, filename):
+        """ Guarda las películas en un archivo.
 
+        Parameters:
+            movies (LinkedOrderedPositionalList): La lista de películas.
+            filename (str): El nombre del archivo de salida.
+        """
+        with open(filename, 'w') as f:
+            for movie in movies:
+                f.write(f"{movie.director}; {movie.title}; {movie.year}; {movie.rating}\n")
 
 def main():
 
@@ -122,8 +158,10 @@ def main():
         movies_text = f.read()
         simulator = MovieSimulator()
         movies = simulator.load_movies_from_file(movies_text)
+        unique_movies = simulator.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
+        simulator.save_movies_to_file(unique_movies, "peliculas_ordenadas.txt")
         simulator.execute_menu(movies)
-
+        # simulator.¿metricas?(movies)
     
 if __name__ == '__main__':
     main()
