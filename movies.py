@@ -63,6 +63,6 @@ class Movie(ABC):
         
         # Agregamos las películas únicas del diccionario a la lista de películas únicas.
         for movie in unique_titles.values():
-            unique_movies.add_last(movie)
+            unique_movies._add_last(movie)
 
         return unique_movies

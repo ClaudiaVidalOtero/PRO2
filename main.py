@@ -23,13 +23,29 @@ class MovieSimulator:
             Lista posicional ordenada que contiene las peliculas cargadas desde el archivo.
         """
         movies = LinkedOrderedPositionalList()
-        for line in text:
-            # Ayuda no se
+        lines = text.split("\n")
 
-        # unique_movies = Movie.delete_duplicates(movies)
-        # return unique_movies
-            pass 
-         
+        # Iterar sobre cada línea en el texto
+        for line in lines:
+            # Dividir la línea en sus partes
+            parts = line.split('; ')
+            # Verificar si la línea tiene la cantidad correcta de elementos
+            if len(parts) == 4:
+                director = parts[0]
+                title = parts[1]
+                year = int(parts[2])
+                rating = float(parts[3])
+                # Crear una instancia de MovieImplementation y agregarla a la lista de películas
+                movie = Movie(director, title, year, rating)
+                movies._add_last(movie)
+            else:
+                print(f"Error: línea mal formateada - {line}")
+
+        # Llamar al método delete_duplicates después de cargar todas las películas
+        unique_movies = movie.delete_duplicates(movies)
+
+        return unique_movies
+            
     def list_all_movies(self, movies):
         pass
     def list_movies_by_director(self, movies, director):
@@ -37,7 +53,7 @@ class MovieSimulator:
     def list_movies_by_year(self, movies, year):
         pass
     
-    def show_menu():
+    def show_menu(self):
         print("\n--- Menú ---")
         print("1. Mostrar todas las películas")
         print("2. Buscar películas por director")
