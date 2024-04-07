@@ -46,6 +46,33 @@ class Movie(ABC):
         else:
             raise ValueError("Rating must be between 1 and 10.")
 
+    def __str__(self):
+        return f"{self.title} ({self.year}) - Dirigida por: {self.director}, Puntuación: {self.rating}"
+    
+    def __lt__(self, other):
+        if self.title != other.title:
+            return self.title < other.title
+        elif self.director != other.director:
+            return self.director < other.director
+        elif self.year != other.year:
+            return self.year < other.year
+        else:
+            return self.rating < other.rating
+
+    def __eq__(self, other):
+        return (self.title, self.director, self.year, self.rating) == (other.title, other.director, other.year, other.rating)
+    
+    def __le__(self, other):
+        return self == other or self < other
+
+    def __gt__(self, other):
+        return not (self < other or self == other)
+
+    def __ge__(self, other):
+        return not (self < other)
+
+    def __ne__(self, other):
+        return not (self == other)
     
     def delete_duplicates(self, movies):
         unique_movies = LinkedOrderedPositionalList() 
@@ -63,6 +90,6 @@ class Movie(ABC):
         
         # Agregamos las películas únicas del diccionario a la lista de películas únicas.
         for movie in unique_titles.values():
-            unique_movies._add_last(movie)
+            unique_movies.add(movie)
 
         return unique_movies
