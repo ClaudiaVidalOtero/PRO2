@@ -4,8 +4,8 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 """
 import sys 
 from movies import *
-from array_ordered_positional_list import ArrayOrderedPositionalList as ArrayOrderedPositionalList
-from linked_ordered_positional_list import LinkedOrderedPositionalList as LinkedOrderedPositionalList 
+from array_ordered_positional_list import ArrayOrderedPositionalList as PositionalList
+#from linked_ordered_positional_list import LinkedOrderedPositionalList as PositionalList 
 
 class MovieSimulator:
     
@@ -22,7 +22,7 @@ class MovieSimulator:
         Returns:
             Lista posicional ordenada que contiene las peliculas cargadas desde el archivo.
         """
-        movies = LinkedOrderedPositionalList()
+        movies = PositionalList()
         lines = text.split("\n")
 
         # Iterar sobre cada línea en el texto
@@ -51,7 +51,7 @@ class MovieSimulator:
         Returns:
             LinkedOrderedPositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
     """
-        unique_movies = LinkedOrderedPositionalList() 
+        unique_movies = PositionalList() 
         unique_titles = {} # Creamos un diccionario para almacenar las películas únicas basadas en el título y el director.
 
         for movie in movies:
@@ -147,6 +147,47 @@ class MovieSimulator:
         with open(filename, 'w') as f:
             for movie in movies:
                 f.write(f"{movie.director}; {movie.title}; {movie.year}; {movie.rating}\n")
+class Metricas:
+    def generate_metrics_per_director(self, movies):
+        # Dictionary to store the number of movies and the sum of ratings per director
+        metrics_per_director = {}
+
+        for movie in movies:
+            if movie.director in metrics_per_director:
+                num_movies, total_ratings = metrics_per_director[movie.director]
+                metrics_per_director[movie.director] = (num_movies + 1, total_ratings + movie.rating)
+            else:
+                metrics_per_director[movie.director] = (1, movie.rating)
+
+        for director, (num_movies, total_ratings) in metrics_per_director.items():
+            yield director, num_movies, total_ratings / num_movies
+
+    def generate_metrics_per_year(self, movies):
+        # Dictionary to store the number of movies and the sum of ratings per release year
+        metrics_per_year = {}
+
+        for movie in movies:
+            if movie.year in metrics_per_year:
+                num_movies, total_ratings = metrics_per_year[movie.year]
+                metrics_per_year[movie.year] = (num_movies + 1, total_ratings + movie.rating)
+            else:
+                metrics_per_year[movie.year] = (1, movie.rating)
+
+        for year, (num_movies, total_ratings) in metrics_per_year.items():
+            yield year, num_movies, total_ratings / num_movies
+
+    def mostrar_metricas(self, movies):
+        print("NUMERO DE PELICULAS POR DIRECTOR:")
+        for director, num_peliculas, _ in self.generate_metrics_per_director(movies):
+            print(f"{director}: {num_peliculas}")
+
+        print("\nPUNTUACION MEDIA POR DIRECTOR:")
+        for director, _, puntuacion_media in self.generate_metrics_per_director(movies):
+            print(f"{director}: {puntuacion_media:.2f}")
+
+        print("\nPUNTUACION MEDIA POR AÑO DE ESTRENO:")
+        for year, _, puntuacion_media in self.generate_metrics_per_year(movies):
+            print(f"Año {year}: {puntuacion_media:.2f}")
 
 def main():
 
@@ -157,11 +198,12 @@ def main():
     with open(sys.argv[1]) as f:
         movies_text = f.read()
         simulator = MovieSimulator()
+        metricas = Metricas()
         movies = simulator.load_movies_from_file(movies_text)
         unique_movies = simulator.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
         simulator.save_movies_to_file(unique_movies, "peliculas_ordenadas.txt")
         simulator.execute_menu(movies)
-        # simulator.¿metricas?(movies)
+        metricas.mostrar_metricas(unique_movies)
     
 if __name__ == '__main__':
     main()

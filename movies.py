@@ -2,9 +2,7 @@
 Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es) 
 """
-from abc import ABC, abstractmethod
-from array_ordered_positional_list import ArrayOrderedPositionalList as ArrayOrderedPositionalList
-from linked_ordered_positional_list import LinkedOrderedPositionalList as LinkedOrderedPositionalList 
+from abc import ABC
 
 class Movie(ABC):
     def __init__(self, director: str, title: str, year: int, rating: int):
