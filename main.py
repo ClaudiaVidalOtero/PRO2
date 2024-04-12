@@ -5,7 +5,7 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 import sys 
 from movies import *
 from array_ordered_positional_list import ArrayOrderedPositionalList as PositionalList
-#from linked_ordered_positional_list import LinkedOrderedPositionalList as PositionalList 
+from linked_ordered_positional_list import LinkedOrderedPositionalList as PositionalList 
 
 class MovieSimulator:
     
@@ -47,9 +47,9 @@ class MovieSimulator:
         """ Elimina las películas duplicadas de la lista de películas dada, manteniendo solo la versión más reciente de cada película.
 
         Parameters:
-            movies (LinkedOrderedPositionalList): Una lista de películas.
+            movies (PositionalList): Una lista de películas.
         Returns:
-            LinkedOrderedPositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
+            PositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
     """
         unique_movies = PositionalList() 
         unique_titles = {} # Creamos un diccionario para almacenar las películas únicas basadas en el título y el director.
@@ -74,7 +74,7 @@ class MovieSimulator:
         """ Imprime todas las películas de la lista posicional ordenada.
 
         Parameters:
-            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (PositionalList): La lista posicional ordenada de películas.
         """
         for movie in movies:
             print(f"{movie.director} ({movie.year}) {movie.title} - Rating: {movie.rating}")
@@ -83,7 +83,7 @@ class MovieSimulator:
         """ Imprime las películas de la lista posicional ordenada dirigidas por un director específico.
 
         Parameters:
-            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (PositionalList): La lista posicional ordenada de películas.
             director (str): El nombre del director/a.
         """
         for movie in movies:
@@ -94,7 +94,7 @@ class MovieSimulator:
         """ Imprime las películas de la lista posicional ordenada estrenadas en un año específico.
 
         Parameters:
-            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (PositionalList): La lista posicional ordenada de películas.
             year (int): El año de estreno.
         """
         for movie in movies:
@@ -114,7 +114,7 @@ class MovieSimulator:
         """ Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
         
         Parameters:
-            movies (LinkedOrderedPositionalList): La lista posicional ordenada de películas.
+            movies (PositionalList): La lista posicional ordenada de películas.
     """
         while True:
             self.show_menu()
@@ -141,14 +141,26 @@ class MovieSimulator:
         """ Guarda las películas en un archivo.
 
         Parameters:
-            movies (LinkedOrderedPositionalList): La lista de películas.
+            movies (PositionalList): La lista de películas.
             filename (str): El nombre del archivo de salida.
         """
         with open(filename, 'w') as f:
             for movie in movies:
                 f.write(f"{movie.director}; {movie.title}; {movie.year}; {movie.rating}\n")
 class Metricas:
+    """
+    Clase para generar métricas relacionadas con las películas.
+    """
+
     def generate_metrics_per_director(self, movies):
+        """ Genera métricas por director.
+
+        Parameters:
+            movies (list): Lista de películas.
+
+        Yields:
+            Tuple: Una tupla con el nombre del director, el número de películas dirigidas por el director y la puntuación media de las películas dirigidas por el director.
+        """
         # Dictionary to store the number of movies and the sum of ratings per director
         metrics_per_director = {}
 
@@ -163,6 +175,14 @@ class Metricas:
             yield director, num_movies, total_ratings / num_movies
 
     def generate_metrics_per_year(self, movies):
+        """ Genera métricas por año de estreno.
+
+        Parameters:
+            movies (list): Lista de películas.
+
+        Yields:
+            Tuple: Una tupla con el año de estreno, el número de películas estrenadas ese año y la puntuación media de las películas estrenadas ese año.
+        """
         # Dictionary to store the number of movies and the sum of ratings per release year
         metrics_per_year = {}
 
@@ -177,6 +197,12 @@ class Metricas:
             yield year, num_movies, total_ratings / num_movies
 
     def mostrar_metricas(self, movies):
+        """ Muestra las métricas generadas.
+
+        Parameters:
+            movies (list): Lista de películas.
+        """
+
         print("NUMERO DE PELICULAS POR DIRECTOR:")
         for director, num_peliculas, _ in self.generate_metrics_per_director(movies):
             print(f"{director}: {num_peliculas}")
