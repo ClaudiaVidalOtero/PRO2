@@ -3,6 +3,7 @@ Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es) 
 """
 import sys 
+import pandas
 from movies import *
 from array_ordered_positional_list import ArrayOrderedPositionalList as PositionalList
 from linked_ordered_positional_list import LinkedOrderedPositionalList as PositionalList 
@@ -184,17 +185,124 @@ class Metricas:
             Tuple: Una tupla con el año de estreno, el número de películas estrenadas ese año y la puntuación media de las películas estrenadas ese año.
         """
         # Dictionary to store the number of movies and the sum of ratings per release year
-        metrics_per_year = {}
+    
+class Estadistica:
+    """
+    Clase para representar estadísticas de un pokémon en combate.
 
-        for movie in movies:
-            if movie.year in metrics_per_year:
-                num_movies, total_ratings = metrics_per_year[movie.year]
-                metrics_per_year[movie.year] = (num_movies + 1, total_ratings + movie.rating)
-            else:
-                metrics_per_year[movie.year] = (1, movie.rating)
+    Parameters:
+        p_type (str): Tipo del personaje.
+        name (str): Nombre del personaje.
+        damage (int): Daño que el personaje infringió en su ronda.
+        opponent_type (str): Tipo de oponente contra el que el pokemon se enfrenta.
+        gained_healing (int): Cantidad de curación que el personaje realiza en su ronda.
+    """
+    def __init__(self, p_type:str, name:str, damage:int, opponent_type:str, gained_healing:int):
+        self._p_type = p_type
+        self._name = name
+        self._damage = damage
+        self._opponent_type = opponent_type
+        self._gained_healing = gained_healing 
+    @property
+    def name(self):
+        # Property (getter) para name
+        return self._name
 
-        for year, (num_movies, total_ratings) in metrics_per_year.items():
-            yield year, num_movies, total_ratings / num_movies
+    @property
+    def p_type(self):
+        # Property (getter) para tipo pokemon
+        return self._p_type    
+    @p_type.setter
+    def p_type(self, value):
+        # Setter para level
+        self._p_type = value
+
+    @property
+    def damage(self):
+        # Property (getter) para strength
+        return self._damage
+    @damage.setter
+    def damage(self, value):
+        # Setter para strength
+        self._damage = value
+
+    @property
+    def opponent_type(self):
+        # Property (getter) para strength
+        return self._opponent_type
+    @opponent_type.setter
+    def strength(self, value):
+        # Setter para strength
+        self._opponent_type = value
+    
+    @property
+    def gained_healing(self):
+        # Property (getter) para strength
+        return self._gained_healing
+    @gained_healing.setter
+    def gained_healing(self, value):
+        # Setter para strength
+        self._gained_healing = value
+
+    def estadisticas(self):
+    #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA RONDA.
+        data = pandas.DataFrame([
+            {"name": estadistica._name, "type": estadistica._p_type, "damage": estadistica._damage, 
+            "opponent_type": estadistica._opponent_type, "healing": estadistica._gained_healing}
+        for estadistica in self.lista_datos_pokemon ])
+        print(data)
+
+
+    #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS
+    
+    #(1) El daño promedio causado por cada Pokémon individualmente.
+    group_col = "name"
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("DAMAGE GROUPED BY NAME")
+    print (data_pokemon)
+
+
+    #2) El daño promedio causado por los Pokémon de cada tipo (agua, fuego, planta)
+    group_col = "type"
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+    
+    print("\n")
+    print ("DAMAGE GROUPED BY TYPE")
+    print (data_pokemon)
+
+
+    #(3) El daño promedio que cada tipo de Pokémon inflige a cada uno de los otros tipos.
+    group_col = ["type","opponent_type"]
+    target_col = "damage"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("DAMAGE GROUPED BY (TYPE, OPPONENT_TYPE) ")
+    print (data_pokemon)
+
+
+    #(4) La curación promedia realizada por cada Pokémon.
+    group_col = "name"
+    target_col = "healing"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("HEALING GROUPED BY NAME")
+    print (data_pokemon)
+
+    #(5) La curación promedia realizada por los Pokémon de cada tipo.
+    group_col = "type"
+    target_col = "healing"
+    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+
+    print("\n")
+    print ("HEALING GROUPED BY TYPE")
+    print (data_pokemon)
+    print("\n")
 
     def mostrar_metricas(self, movies):
         """ Muestra las métricas generadas.
