@@ -11,7 +11,8 @@ from linked_ordered_positional_list import LinkedOrderedPositionalList as Positi
 class MovieSimulator:
     
     """Una clase que simula la gestión de un catálogo de películas de una plataforma de streaming.."""
-    
+    movie_data = []
+
     def load_movies_from_file(self, text: str):
         
         """
@@ -38,6 +39,7 @@ class MovieSimulator:
                 rating = float(parts[3])
                 # Crear una instancia de MovieImplementation y agregarla a la lista de películas
                 movie = Movie(director, title, year, rating)
+                self.movie_data.append(Estadistica(movie.director, movie.title, movie.year, movie.rating))
                 movies.add(movie)
             else:
                 print(f"Error: línea mal formateada - {line}")
@@ -53,24 +55,31 @@ class MovieSimulator:
             PositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
     """
         unique_movies = PositionalList() 
-        unique_titles = {} # Creamos un diccionario para almacenar las películas únicas basadas en el título y el director.
+        unique_titles = PositionalList() # Creamos una lista ordenada para almacenar las películas únicas basadas en el título y el director.
+        terminado = False
 
-        for movie in movies:
-            # Verificamos si el título y director de la película actual ya están en el diccionario de películas únicas.
-            if (movie.title, movie.director) in unique_titles:
-                # Si ya hay una película con el mismo título y director, comparamos los años de estreno.
-                existing_movie = unique_titles[(movie.title, movie.director)]
-                if movie.year > existing_movie.year:
-                    unique_titles[(movie.title, movie.director)] = movie
-            else:
-                unique_titles[(movie.title, movie.director)] = movie
-        
-        # Agregamos las películas únicas del diccionario a la lista de películas únicas.
-        for movie in unique_titles.values():
-            unique_movies.add(movie)
+        p1 = movies.first()
+        while not terminado: 
+            if p1 is None:
+                break
+
+            p2 = movies.after(p1)
+            movie1 = movies.get_element(p1)
+            movie2 = movies.get_element(p2)
+
+            if movie1.title != movie2.title or movie2 is None:
+                unique_titles.add(movie1)
+                if movie2 is None:
+                    terminado = True
+
+            p1 = p2
+
+        # Agregar las películas únicas de la lista de títulos únicos a la lista de películas únicas
+        for movie in unique_titles:
+            unique_movies.add_last(movie)
 
         return unique_movies
-    
+        
     def show_all_movies(self, movies):
         """ Imprime todas las películas de la lista posicional ordenada.
 
@@ -148,180 +157,83 @@ class MovieSimulator:
         with open(filename, 'w') as f:
             for movie in movies:
                 f.write(f"{movie.director}; {movie.title}; {movie.year}; {movie.rating}\n")
-class Metricas:
-    """
-    Clase para generar métricas relacionadas con las películas.
-    """
-
-    def generate_metrics_per_director(self, movies):
-        """ Genera métricas por director.
-
-        Parameters:
-            movies (list): Lista de películas.
-
-        Yields:
-            Tuple: Una tupla con el nombre del director, el número de películas dirigidas por el director y la puntuación media de las películas dirigidas por el director.
-        """
-        # Dictionary to store the number of movies and the sum of ratings per director
-        metrics_per_director = {}
-
-        for movie in movies:
-            if movie.director in metrics_per_director:
-                num_movies, total_ratings = metrics_per_director[movie.director]
-                metrics_per_director[movie.director] = (num_movies + 1, total_ratings + movie.rating)
-            else:
-                metrics_per_director[movie.director] = (1, movie.rating)
-
-        for director, (num_movies, total_ratings) in metrics_per_director.items():
-            yield director, num_movies, total_ratings / num_movies
-
-    def generate_metrics_per_year(self, movies):
-        """ Genera métricas por año de estreno.
-
-        Parameters:
-            movies (list): Lista de películas.
-
-        Yields:
-            Tuple: Una tupla con el año de estreno, el número de películas estrenadas ese año y la puntuación media de las películas estrenadas ese año.
-        """
-        # Dictionary to store the number of movies and the sum of ratings per release year
     
 class Estadistica:
     """
-    Clase para representar estadísticas de un pokémon en combate.
-
+    Clase para representar estadísticas de una película.
     Parameters:
-        p_type (str): Tipo del personaje.
-        name (str): Nombre del personaje.
-        damage (int): Daño que el personaje infringió en su ronda.
-        opponent_type (str): Tipo de oponente contra el que el pokemon se enfrenta.
-        gained_healing (int): Cantidad de curación que el personaje realiza en su ronda.
-    """
-    def __init__(self, p_type:str, name:str, damage:int, opponent_type:str, gained_healing:int):
-        self._p_type = p_type
-        self._name = name
-        self._damage = damage
-        self._opponent_type = opponent_type
-        self._gained_healing = gained_healing 
+            director (str): Director de la película.
+            title (str): Título de la película.
+            year (int): Año de estreno.
+            rating (int): Puntuación de la película por el público.
+        """
+    def __init__(self, director: str, title: str, year: int, rating: int):
+        self._director = director
+        self._title = title
+        self._year = year
+        self._rating = rating
+
     @property
     def name(self):
-        # Property (getter) para name
-        return self._name
+        # Property (getter) para director
+        return self._director
 
     @property
     def p_type(self):
-        # Property (getter) para tipo pokemon
-        return self._p_type    
-    @p_type.setter
-    def p_type(self, value):
-        # Setter para level
-        self._p_type = value
+        # Property (getter) para title
+        return self._title  
+    
 
     @property
     def damage(self):
-        # Property (getter) para strength
-        return self._damage
-    @damage.setter
-    def damage(self, value):
-        # Setter para strength
-        self._damage = value
+        # Property (getter) para year
+        return self._year
+    
 
     @property
     def opponent_type(self):
-        # Property (getter) para strength
-        return self._opponent_type
-    @opponent_type.setter
-    def strength(self, value):
-        # Setter para strength
-        self._opponent_type = value
+        # Property (getter) para rating
+        return self._rating
     
-    @property
-    def gained_healing(self):
-        # Property (getter) para strength
-        return self._gained_healing
-    @gained_healing.setter
-    def gained_healing(self, value):
-        # Setter para strength
-        self._gained_healing = value
 
-    def estadisticas(self):
-    #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA RONDA.
+def estadisticas(self):
+    #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA PELICULA.
         data = pandas.DataFrame([
-            {"name": estadistica._name, "type": estadistica._p_type, "damage": estadistica._damage, 
-            "opponent_type": estadistica._opponent_type, "healing": estadistica._gained_healing}
-        for estadistica in self.lista_datos_pokemon ])
+            {"director": estadistica._director, "title": estadistica._title, "year": estadistica._year, 
+            "rating": estadistica._rating}
+        for estadistica in self.movie_data ])
         print(data)
 
+        #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS
+        
+        #(1) Número de películas por director/a.
+        group_col = "director"
+        target_col = "title"
+        data_movie = data.groupby(group_col).agg({target_col :["nunique"]})
 
-    #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS
-    
-    #(1) El daño promedio causado por cada Pokémon individualmente.
-    group_col = "name"
-    target_col = "damage"
-    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
-
-    print("\n")
-    print ("DAMAGE GROUPED BY NAME")
-    print (data_pokemon)
-
-
-    #2) El daño promedio causado por los Pokémon de cada tipo (agua, fuego, planta)
-    group_col = "type"
-    target_col = "damage"
-    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
-    
-    print("\n")
-    print ("DAMAGE GROUPED BY TYPE")
-    print (data_pokemon)
+        print("\n")
+        print ("MOVIES GROUPED BY DIRECTOR")
+        print (data_movie)
 
 
-    #(3) El daño promedio que cada tipo de Pokémon inflige a cada uno de los otros tipos.
-    group_col = ["type","opponent_type"]
-    target_col = "damage"
-    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
+        #2) Puntuación media por director/a.
+        group_col = "director"
+        target_col = "rating"
+        data_movie = data.groupby(group_col).agg({target_col :["mean"]})
+        
+        print("\n")
+        print ("RATINGS GROUP BY DIRECTOR")
+        print (data_movie)
 
-    print("\n")
-    print ("DAMAGE GROUPED BY (TYPE, OPPONENT_TYPE) ")
-    print (data_pokemon)
 
+        #(3) Puntuación media por año de estreno.
+        group_col = "year"
+        target_col = "rating"
+        data_movie = data.groupby(group_col).agg({target_col :["mean"]})
 
-    #(4) La curación promedia realizada por cada Pokémon.
-    group_col = "name"
-    target_col = "healing"
-    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
-
-    print("\n")
-    print ("HEALING GROUPED BY NAME")
-    print (data_pokemon)
-
-    #(5) La curación promedia realizada por los Pokémon de cada tipo.
-    group_col = "type"
-    target_col = "healing"
-    data_pokemon = data.groupby(group_col).agg({target_col :["mean","std"]})
-
-    print("\n")
-    print ("HEALING GROUPED BY TYPE")
-    print (data_pokemon)
-    print("\n")
-
-    def mostrar_metricas(self, movies):
-        """ Muestra las métricas generadas.
-
-        Parameters:
-            movies (list): Lista de películas.
-        """
-
-        print("NUMERO DE PELICULAS POR DIRECTOR:")
-        for director, num_peliculas, _ in self.generate_metrics_per_director(movies):
-            print(f"{director}: {num_peliculas}")
-
-        print("\nPUNTUACION MEDIA POR DIRECTOR:")
-        for director, _, puntuacion_media in self.generate_metrics_per_director(movies):
-            print(f"{director}: {puntuacion_media:.2f}")
-
-        print("\nPUNTUACION MEDIA POR AÑO DE ESTRENO:")
-        for year, _, puntuacion_media in self.generate_metrics_per_year(movies):
-            print(f"Año {year}: {puntuacion_media:.2f}")
+        print("\n")
+        print ("RATINGS GROUP BY YEAR")
+        print (data_movie)
 
 def main():
 
@@ -332,12 +244,12 @@ def main():
     with open(sys.argv[1]) as f:
         movies_text = f.read()
         simulator = MovieSimulator()
-        metricas = Metricas()
         movies = simulator.load_movies_from_file(movies_text)
         unique_movies = simulator.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
         simulator.save_movies_to_file(unique_movies, "peliculas_ordenadas.txt")
         simulator.execute_menu(movies)
-        metricas.mostrar_metricas(unique_movies)
+        
+        estadisticas(simulator)
     
 if __name__ == '__main__':
     main()
