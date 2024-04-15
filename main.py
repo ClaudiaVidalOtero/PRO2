@@ -172,9 +172,10 @@ class Estadistica:
             director (str): Director de la película.
             title (str): Título de la película.
             year (int): Año de estreno.
-            rating (int): Puntuación de la película por el público.
+            rating (float): Puntuación de la película por el público.
         """
     def __init__(self, director: str, title: str, year: int, rating: int):
+
         self._director = director
         self._title = title
         self._year = year
@@ -190,12 +191,10 @@ class Estadistica:
         # Property (getter) para title
         return self._title  
     
-
     @property
     def damage(self):
         # Property (getter) para year
         return self._year
-    
 
     @property
     def opponent_type(self):
@@ -256,7 +255,6 @@ def main():
         unique_movies = simulator.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
         simulator.save_movies_to_file(unique_movies, "peliculas_ordenadas.txt")
         simulator.execute_menu(movies)
-        
         estadisticas(simulator)
     
 if __name__ == '__main__':
