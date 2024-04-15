@@ -57,26 +57,33 @@ class MovieSimulator:
         unique_movies = PositionalList() 
         unique_titles = PositionalList() # Creamos una lista ordenada para almacenar las películas únicas basadas en el título y el director.
         terminado = False
-
+        
         p1 = movies.first()
         while not terminado: 
             if p1 is None:
-                break
+                terminado = True
 
-            p2 = movies.after(p1)
-            movie1 = movies.get_element(p1)
-            movie2 = movies.get_element(p2)
+            else:
+                p2 = movies.after(p1)
+                movie1 = movies.get_element(p1)
+                if p2 is None:
+                    unique_titles.add(movie1)
+                    terminado = True 
+                else:
+                    movie2 = movies.get_element(p2)
+                    
+                if movie1.title != movie2.title or movie2 is None:
+                
+                    unique_titles.add(movie1)
+                    if movie2 is None:
+                        terminado = True
+                        
 
-            if movie1.title != movie2.title or movie2 is None:
-                unique_titles.add(movie1)
-                if movie2 is None:
-                    terminado = True
-
-            p1 = p2
+                p1 = p2
 
         # Agregar las películas únicas de la lista de títulos únicos a la lista de películas únicas
         for movie in unique_titles:
-            unique_movies.add_last(movie)
+            unique_movies._add_last(movie)
 
         return unique_movies
         
@@ -198,6 +205,7 @@ class Estadistica:
 
 def estadisticas(self):
     #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA PELICULA.
+        print("DATAFRAME:")
         data = pandas.DataFrame([
             {"director": estadistica._director, "title": estadistica._title, "year": estadistica._year, 
             "rating": estadistica._rating}
