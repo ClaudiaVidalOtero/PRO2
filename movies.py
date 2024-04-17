@@ -23,19 +23,21 @@ class Movie(ABC):
     def director(self):
         """Ejemplo de uso propiedades (en vez de getter)"""
         return self._director
+    
     @property
     def title(self):
         """Ejemplo de uso propiedades (en vez de getter)"""
         return self._title
+    
     @property
     def year(self):
         """Ejemplo de uso propiedades (en vez de getter)"""
         return self._year
+    
     @property
     def rating(self):
         """Ejemplo de uso propiedades (en vez de getter)"""
         return self._rating
-
     @rating.setter
     def rating(self, rating: int):
         """Ejemplo de uso propiedades (en vez de setter)"""
@@ -44,12 +46,13 @@ class Movie(ABC):
         else:
             raise ValueError("Rating must be between 1 and 10.")
 
+
     def __str__(self):
         return f"{self.director} ({self.year}) {self.title} - Rating: {self.rating}"
 
-    
     def __lt__(self, other):
-        """ Comprueba si el objeto actual es menor que otro objeto.
+        """ 
+        Comprueba si el objeto actual es menor que otro objeto.
 
         Parameters:
             other: Otro objeto con el que se va a comparar.

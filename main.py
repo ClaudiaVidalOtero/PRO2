@@ -10,7 +10,7 @@ from linked_ordered_positional_list import LinkedOrderedPositionalList as Positi
 
 class MovieSimulator:
     
-    """Una clase que simula la gestión de un catálogo de películas de una plataforma de streaming.."""
+    """Una clase que simula la gestión de un catálogo de películas de una plataforma de streaming."""
     movie_data = []
 
     def load_movies_from_file(self, text: str):
@@ -47,13 +47,14 @@ class MovieSimulator:
         return movies
     
     def delete_duplicates(self, movies):
-        """ Elimina las películas duplicadas de la lista de películas dada, manteniendo solo la versión más reciente de cada película.
+        """ 
+        Elimina las películas duplicadas de la lista de películas dada, manteniendo solo la versión más reciente de cada película.
 
         Parameters:
             movies (PositionalList): Una lista de películas.
         Returns:
             PositionalList: Una lista de películas sin duplicados, ordenada por autor, año de estreno y título.
-    """
+        """
         unique_movies = PositionalList() 
         unique_titles = PositionalList() # Creamos una lista ordenada para almacenar las películas únicas basadas en el título y el director.
         terminado = False
@@ -81,14 +82,15 @@ class MovieSimulator:
 
                 p1 = p2
 
-        # Agregar las películas únicas de la lista de títulos únicos a la lista de películas únicas
+        # Agregar las películas únicas de la lista de títulos únicos a la lista de películas únicas.
         for movie in unique_titles:
             unique_movies._add_last(movie)
 
         return unique_movies
         
     def show_all_movies(self, movies):
-        """ Imprime todas las películas de la lista posicional ordenada.
+        """ 
+        Imprime todas las películas de la lista posicional ordenada.
 
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
@@ -97,7 +99,8 @@ class MovieSimulator:
             print(f"{movie.director} ({movie.year}) {movie.title} - Rating: {movie.rating}")
 
     def show_movies_by_director(self, movies, director):
-        """ Imprime las películas de la lista posicional ordenada dirigidas por un director específico.
+        """ 
+        Imprime las películas de la lista posicional ordenada dirigidas por un director específico.
 
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
@@ -108,7 +111,8 @@ class MovieSimulator:
                 print(f"{movie.title} ({movie.year}) - Rating: {movie.rating}")
 
     def show_movies_by_year(self, movies, year):
-        """ Imprime las películas de la lista posicional ordenada estrenadas en un año específico.
+        """ 
+        Imprime las películas de la lista posicional ordenada estrenadas en un año específico.
 
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
@@ -128,11 +132,12 @@ class MovieSimulator:
         print("4. Salir")
     
     def execute_menu(self, movies):
-        """ Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
+        """ 
+        Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
         
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
-    """
+        """
         while True:
             self.show_menu()
             option = input("Seleccione una opción: ")
@@ -173,7 +178,7 @@ class Estadistica:
             title (str): Título de la película.
             year (int): Año de estreno.
             rating (float): Puntuación de la película por el público.
-        """
+    """
     def __init__(self, director: str, title: str, year: int, rating: int):
 
         self._director = director
@@ -203,7 +208,8 @@ class Estadistica:
     
 
 def estadisticas(self):
-    #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA PELICULA.
+        """Crea las estadísticas pedidas por el enunciado."""
+        #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA PELÍCULA.
         print("DATAFRAME:")
         data = pandas.DataFrame([
             {"director": estadistica._director, "title": estadistica._title, "year": estadistica._year, 
@@ -211,7 +217,7 @@ def estadisticas(self):
         for estadistica in self.movie_data ])
         print(data)
 
-        #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS
+        #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS.
         
         #(1) Número de películas por director/a.
         group_col = "director"
