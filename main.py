@@ -2,9 +2,8 @@
 Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es) 
 """
-import sys 
 import pandas
-from movies import *
+from movies import Movie
 from array_ordered_positional_list import ArrayOrderedPositionalList as PositionalList
 from linked_ordered_positional_list import LinkedOrderedPositionalList as PositionalList 
 
