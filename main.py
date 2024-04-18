@@ -128,18 +128,17 @@ class MovieSimulator:
         print("1. Mostrar todas las películas")
         print("2. Buscar películas por director")
         print("3. Buscar películas por año de estreno")
-        print("4. Generar nuevo fichero con las películas ordenadas y sin duplicados")
+        print("4. Generar nuevo archivo con las películas ordenadas y sin duplicados")
         print("5. Mostrar métricas")
         print("6. Salir")
     
-    def execute_menu(self, movies_text):
+    def execute_menu(self, movies):
         """ 
         Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
         
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
         """
-        movies = self.load_movies_from_file(movies_text)
         while True:
             self.show_menu()
             option = input("Seleccione una opción: ")
@@ -155,10 +154,9 @@ class MovieSimulator:
                 year = int(input("Introduce el año de estreno: "))
                 print(f"\n--- Películas estrenadas en el año {year} ---")
                 self.show_movies_by_year(movies, year)
-            elif option == "4":# Generar nuevo fichero con las películas ordenadas y sin duplicados
-                nuevo_fichero = input("Introduzca nombre del nuevo fichero (terminado en .txt):")
-                unique_movies = self.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
-                self.save_movies_to_file(unique_movies, nuevo_fichero)
+            elif option == "4": # Genera nuevo archivo con las películas ordenadas y sin duplicados
+                unique_movies = self.delete_duplicates(movies) 
+                self.save_movies_to_file(unique_movies, "peliculas_ordenadas")
             elif option == "5": # Mostrar métricas
                 estadisticas(self)
             elif option == "6":
@@ -266,11 +264,11 @@ def main():
         with open(namefile) as f:
             movies_text = f.read()
             simulator = MovieSimulator()
-            simulator.execute_menu(movies_text)
+            movies = simulator.load_movies_from_file(movies_text)
+            simulator.execute_menu(movies)
 
     except FileNotFoundError:
         print("El archivo no fue encontrado.")
-
     
 if __name__ == '__main__':
     main()
