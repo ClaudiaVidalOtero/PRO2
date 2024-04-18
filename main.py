@@ -121,23 +121,25 @@ class MovieSimulator:
         for movie in movies:
             if movie.year == year:
                 print(f"{movie.title} - Dirigida por: {movie.director} - Rating: {movie.rating}")
-
+        
     def show_menu(self):
         """ Muestra el menú de opciones disponibles."""
-
         print("\n--- Menú ---")
         print("1. Mostrar todas las películas")
         print("2. Buscar películas por director")
         print("3. Buscar películas por año de estreno")
-        print("4. Salir")
+        print("4. Generar nuevo fichero con las películas ordenadas y sin duplicados")
+        print("5. Mostrar métricas")
+        print("6. Salir")
     
-    def execute_menu(self, movies):
+    def execute_menu(self, movies_text):
         """ 
         Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
         
         Parameters:
             movies (PositionalList): La lista posicional ordenada de películas.
         """
+        movies = self.load_movies_from_file(movies_text)
         while True:
             self.show_menu()
             option = input("Seleccione una opción: ")
@@ -153,12 +155,18 @@ class MovieSimulator:
                 year = int(input("Introduce el año de estreno: "))
                 print(f"\n--- Películas estrenadas en el año {year} ---")
                 self.show_movies_by_year(movies, year)
-            elif option == "4":
+            elif option == "4":# Generar nuevo fichero con las películas ordenadas y sin duplicados
+                nuevo_fichero = input("Introduzca nombre del nuevo fichero (terminado en .txt):")
+                unique_movies = self.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
+                self.save_movies_to_file(unique_movies, nuevo_fichero)
+            elif option == "5": # Mostrar métricas
+                estadisticas(self)
+            elif option == "6":
                 print("Hasta luego!")
                 break
             else:
                 print("Opción no válida. Por favor, seleccione una opción válida.")
-                
+
     def save_movies_to_file(self, movies, filename):
         """ Guarda las películas en un archivo.
 
@@ -187,7 +195,7 @@ class Estadistica:
         self._rating = rating
 
     @property
-    def name(self):
+    def director(self):
         # Property (getter) para director
         return self._director
 
@@ -197,7 +205,7 @@ class Estadistica:
         return self._title  
     
     @property
-    def damage(self):
+    def year(self):
         # Property (getter) para year
         return self._year
 
@@ -253,15 +261,16 @@ def main():
     """
     La función principal que lee desde un archivo y comienza la simulación.
     """
+    try:
+        namefile = input("Ingrese el nombre del archivo de películas: ")
+        with open(namefile) as f:
+            movies_text = f.read()
+            simulator = MovieSimulator()
+            simulator.execute_menu(movies_text)
 
-    with open(sys.argv[1]) as f:
-        movies_text = f.read()
-        simulator = MovieSimulator()
-        movies = simulator.load_movies_from_file(movies_text)
-        unique_movies = simulator.delete_duplicates(movies) # Guardar películas ordenadas en un nuevo archivo
-        simulator.save_movies_to_file(unique_movies, "peliculas_ordenadas.txt")
-        simulator.execute_menu(movies)
-        estadisticas(simulator)
+    except FileNotFoundError:
+        print("El archivo no fue encontrado.")
+
     
 if __name__ == '__main__':
     main()
