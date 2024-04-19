@@ -10,12 +10,14 @@ from linked_ordered_positional_list import LinkedOrderedPositionalList as Positi
 class MovieSimulator:
     
     """Una clase que simula la gestión de un catálogo de películas de una plataforma de streaming."""
+    
     movie_data = []
 
     def load_movies_from_file(self, text: str):
         
         """
-        Crea las peliculas a partir de un texto dado como entrada y las almacena en una lista posicional ordenada
+        Crea las peliculas a partir de un texto dado como entrada y las almacena en una lista posicional ordenada,
+        además, crea una lista para calcular las métricas.
 
         Parameters:
             text (str): Texto multilínea que contiene los datos de las peliculas.
@@ -36,9 +38,10 @@ class MovieSimulator:
                 title = parts[1]
                 year = int(parts[2])
                 rating = float(parts[3])
-                # Crear una instancia de MovieImplementation y agregarla a la lista de películas
+                # Crea una lista para las métricas
+                self.movie_data.append(Metrics(movie.director, movie.title, movie.year, movie.rating)) 
+                # Crea una instancia de MovieImplementation y la agrega a la lista posicional de películas
                 movie = Movie(director, title, year, rating)
-                self.movie_data.append(Estadistica(movie.director, movie.title, movie.year, movie.rating))
                 movies.add(movie)
             else:
                 print(f"Error: línea mal formateada - {line}")
@@ -58,27 +61,32 @@ class MovieSimulator:
         unique_titles = PositionalList() # Creamos una lista ordenada para almacenar las películas únicas basadas en el título y el director.
         terminado = False
         
-        p1 = movies.first()
-        while not terminado: 
+        p1 = movies.first() # Obtenemos el primer nodo de la lista de películas
+
+        while not terminado: # Iteramos hasta que se haya recorrido toda la lista de películas
+            
+            # Verificamos si hemos llegado al final de la lista
             if p1 is None:
                 terminado = True
 
             else:
-                p2 = movies.after(p1)
+                p2 = movies.after(p1) # Obtenemos el siguiente nodo de la lista
                 movie1 = movies.get_element(p1)
+
+                # Si es el final, añadimos la película a la lista de títulos únicos y terminamos el proceso
                 if p2 is None:
                     unique_titles.add(movie1)
                     terminado = True 
+                # Si no, obtenemos la película del siguiente nodo
                 else:
                     movie2 = movies.get_element(p2)
-                    
+
+                # Verificamos si las películas son diferentes o si hemos llegado al final de la lista
                 if movie1.title != movie2.title or movie2 is None:
-                
                     unique_titles.add(movie1)
                     if movie2 is None:
                         terminado = True
-                        
-
+                # Avanzamos al siguiente nodo de la lista        
                 p1 = p2
 
         # Agregar las películas únicas de la lista de títulos únicos a la lista de películas únicas.
@@ -149,7 +157,7 @@ class MovieSimulator:
                 director = input("Introduce el nombre del director/a: ")
                 print(f"\n--- Películas dirigidas por {director} ---")
                 self.show_movies_by_director(movies, director)
-            elif option == "3":
+            elif option == "3": 
                 year = int(input("Introduce el año de estreno: "))
                 print(f"\n--- Películas estrenadas en el año {year} ---")
                 self.show_movies_by_year(movies, year)
@@ -157,7 +165,7 @@ class MovieSimulator:
                 unique_movies = self.delete_duplicates(movies) 
                 self.save_movies_to_file(unique_movies, "peliculas_ordenadas")
             elif option == "5": # Mostrar métricas
-                estadisticas(self)
+                metrics(self)
             elif option == "6":
                 print("Hasta luego!")
                 break
@@ -175,9 +183,10 @@ class MovieSimulator:
             for movie in movies:
                 f.write(f"{movie.director}; {movie.title}; {movie.year}; {movie.rating}\n")
     
-class Estadistica:
+class Metrics:
     """
     Clase para representar estadísticas de una película.
+
     Parameters:
             director (str): Director de la película.
             title (str): Título de la película.
@@ -197,7 +206,7 @@ class Estadistica:
         return self._director
 
     @property
-    def p_type(self):
+    def title(self):
         # Property (getter) para title
         return self._title  
     
@@ -207,19 +216,19 @@ class Estadistica:
         return self._year
 
     @property
-    def opponent_type(self):
+    def rating(self):
         # Property (getter) para rating
         return self._rating
     
 
-def estadisticas(self):
+def metrics(self):
         """Crea las estadísticas pedidas por el enunciado."""
         #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA PELÍCULA.
         print("DATAFRAME:")
         data = pandas.DataFrame([
-            {"director": estadistica._director, "title": estadistica._title, "year": estadistica._year, 
-            "rating": estadistica._rating}
-        for estadistica in self.movie_data ])
+            {"director": metrics._director, "title": metrics._title, "year": metrics._year, 
+            "rating": metrics._rating}
+        for metrics in self.movie_data ])
         print(data)
 
         #ESTADÍSTICAS DE LA SIMULACIÓN USANDO PANDAS.

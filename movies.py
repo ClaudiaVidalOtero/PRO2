@@ -46,7 +46,6 @@ class Movie(ABC):
         else:
             raise ValueError("Rating must be between 1 and 10.")
 
-
     def __str__(self):
         return f"{self.director} ({self.year}) {self.title} - Rating: {self.rating}"
 
