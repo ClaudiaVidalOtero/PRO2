@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 from curso import Curso
 from avl_tree import AVL
-
+from binary_search_tree import *
 class SimuladorAcademias:
 
     curso_data = []
@@ -40,21 +40,46 @@ class SimuladorAcademias:
                 precio = float(parts[5])
                 # Crea una instancia de Curso y la agrega al arbol posicional de cursos
                 curso = Curso(nombre, duracion, num_alumnos, nivel, idioma, precio)
-                self.insert(cursos, curso)
+                cursos.__setitem__(nombre, curso)
                 # Crea una lista para las métricas
                 # self.curso_data.append(Metrics(curso.nombre, curso.duracion, curso.num_alumnos, curso.nivel, curso.idioma, curso.precio)) 
             else:
                 print(f"Error: línea mal formateada - {line}")
 
         return cursos
-        
     
+    def oferta_agregada(arbol_origen, arbol_destino, nombre_academia):
 
-    def oferta_agregada(self):
-        pass
+        for _, curso in arbol_origen.algo q devuelva los valores de cada nodo:
+            nombre_curso = curso.nombre
+            nivel_curso = curso.nivel
+            idioma_curso = curso.idioma
+            
+            # Buscar el curso en el árbol destino
+            nodo = arbol_destino._subtree_search(arbol_destino.root(), (nombre_curso, nivel_curso, idioma_curso))
+            
+            # Si el curso ya está en el árbol destino, actualizar o fusionar
+            if nodo is not None and nodo.key() == (nombre_curso, nivel_curso, idioma_curso):
+                curso_destino = nodo.value()
+                # Comparar los cursos y seleccionar el de mayor beneficio
+                if curso.beneficio() > curso_destino.beneficio():
+                    # Reemplazar el curso en el árbol destino con el de mayor beneficio
+                    arbol_destino._replace(nodo, ((nombre_curso, nivel_curso, idioma_curso), curso))
+                # Sumar el número de estudiantes
+                curso_destino.num_alumnos += curso.num_alumnos
+            else:
+                # Agregar el curso al árbol destino
+                # Si el nombre del curso ya existe en el árbol destino, añadir el nombre de la compañía
+                if nodo is not None and nodo.key()[0] == nombre_curso:
+                    nombre_curso += f' ({nombre_academia})'
+                # Agregar el curso al árbol destino
+                arbol_destino.__setitem__(nombre_curso, (nombre_curso, nivel_curso, idioma_curso))
+
+        print(arbol_destino)
+
     def oferta_comun(self):
         pass
-
+    
 
 class Metrics:
     pass
@@ -64,15 +89,17 @@ def main():
     """
     La función principal que lee desde un archivo y comienza la simulación.
     """
-
+    simulator = SimuladorAcademias()
     with open(sys.argv[1]) as f:
-        cursos_text = f.read()
-        simulator = SimuladorAcademias()
-        simulator.leer_cursos(cursos_text)
+        cursosA_text = f.read()
+        cursosA = simulator.leer_cursos(cursosA_text)
+    with open(sys.argv[2]) as g:
+        cursosB_text = g.read()
+        cursosB = simulator.leer_cursos(cursosB_text)
+        simulator.oferta_agregada(cursosA, cursosB)
+
         #simulator.execute_menu(cursos)
 
-    
-    print("El archivo no fue encontrado.")
     
 if __name__ == '__main__':
     main()

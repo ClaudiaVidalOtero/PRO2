@@ -9,27 +9,3 @@ Haskell,60,12,B,Eng,20.00
 Lua,45,10,A,Gal,14.00
 Julia,60,10,B,Eng,17.00
 Prolog,60,10,B,Eng,18.00
-
-dad_node = None
-        value = curr_node
-        curr_node.height = 0
-        cursos.size = 1
-        while True:
-            if curr_node is not None:
-
-                dad_node = curr_node
-
-                if value.label < curr_node.label:
-                    curr_node = curr_node.left
-                else:
-                    curr_node = curr_node.right
-            else:
-                value.height = dad_node.height
-                dad_node.height += 1
-                if value.label < dad_node.label:
-                    dad_node.left = value
-                else:
-                    dad_node.right = value
-                cursos.rebalance(value)
-                cursos.size += 1
-                break
