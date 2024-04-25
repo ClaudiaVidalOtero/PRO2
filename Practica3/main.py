@@ -38,10 +38,10 @@ class MovieSimulator:
                 title = parts[1]
                 year = int(parts[2])
                 rating = float(parts[3])
-                # Crea una instancia de MovieImplementation y la agrega a la lista posicional de películas
-                movie = Movie(director, title, year, rating)
                 # Crea una lista para las métricas
                 self.movie_data.append(Metrics(movie.director, movie.title, movie.year, movie.rating)) 
+                # Crea una instancia de MovieImplementation y la agrega a la lista posicional de películas
+                movie = Movie(director, title, year, rating)
                 movies.add(movie)
             else:
                 print(f"Error: línea mal formateada - {line}")

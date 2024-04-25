@@ -1,0 +1,13 @@
+Rust,60,10,A,Cas,15.00
+C,120,30,A,Cas,8.00
+Rust,60,10,A,Cas,15.00
+C,120,30,A,Cas,8.00
+C++,60,18,A,Eng,22.00
+Ruby,45,10,B,Eng,15.00
+Python,90,40,C,Eng,30.00
+Lua,40,10,A,Gal,20.00
+Julia,120,10,C,Eng,30.00
+Prolog,80,10,B,Cas,35.00
+R,60,20,A,Cas,21.00
+Matlab,90,10,A,Eng,23.00
+SQL,60,25,B,Eng,19.00

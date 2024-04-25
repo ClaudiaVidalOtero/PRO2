@@ -10,9 +10,9 @@ class Curso(ABC):
         Inicializa la clase Curso y se le asignan sus atributos.
         Parameters:
             nombre (str): 
-            duracion (str): 
+            duracion (int): 
             num_alumnos (int):
-            nivel (str): ???
+            nivel (str):
             idioma (str)
             precio (int)
         
@@ -26,29 +26,24 @@ class Curso(ABC):
 
     @property
     def nombre(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._nombre
     
     @property
     def duracion(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._duracion
     
     @property
     def num_alumnos(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._num_alumnos
     
     @property
     def nivel(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._nivel
+    
     @property
     def idioma(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._idioma
     @property
     def precio(self):
-        """Ejemplo de uso propiedades (en vez de getter)"""
         return self._precio
     
