@@ -40,7 +40,11 @@ class SimuladorAcademias:
                 precio = float(parts[5])
                 # Crea una instancia de Curso y la agrega al arbol posicional de cursos
                 curso = Curso(nombre, duracion, num_alumnos, nivel, idioma, precio)
-                cursos.__setitem__(nombre, curso)
+                clave = (curso.nombre, curso.nivel, curso.idioma)
+                cursos.__setitem__(clave, curso)
+                # cursos[clave] = curso
+                # cursos.__getitem__(clave)
+                print(clave)
                 # Crea una lista para las métricas
                 # self.curso_data.append(Metrics(curso.nombre, curso.duracion, curso.num_alumnos, curso.nivel, curso.idioma, curso.precio)) 
             else:
@@ -50,7 +54,7 @@ class SimuladorAcademias:
     
     def oferta_agregada(arbol_origen, arbol_destino, nombre_academia):
 
-        for _, curso in arbol_origen.(algo q devuelva los valores de cada nodo):
+        for _, curso in arbol_origen.algo: #(algo q devuelva los valores de cada nodo):
             nombre_curso = curso.nombre
             nivel_curso = curso.nivel
             idioma_curso = curso.idioma
@@ -124,8 +128,6 @@ class Metrics:
     def idioma(self):
         return self._idioma
     
-    
-
 
 def main():
 
@@ -135,11 +137,11 @@ def main():
     simulator = SimuladorAcademias()
     with open(sys.argv[1]) as f:
         cursosA_text = f.read()
-        cursosA = simulator.leer_cursos(cursosA_text)
+        simulator.leer_cursos(cursosA_text)
     with open(sys.argv[2]) as g:
         cursosB_text = g.read()
-        cursosB = simulator.leer_cursos(cursosB_text)
-        simulator.oferta_agregada(cursosA, cursosB)
+        simulator.leer_cursos(cursosB_text)
+        # simulator.oferta_agregada(cursosA, cursosB)
 
         #simulator.execute_menu(cursos)
 
