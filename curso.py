@@ -27,6 +27,9 @@ class Curso(ABC):
     @property
     def nombre(self):
         return self._nombre
+    @nombre.setter
+    def nombre(self, nombre):
+        self._nombre = nombre
     
     @property
     def duracion(self):
@@ -35,6 +38,9 @@ class Curso(ABC):
     @property
     def num_alumnos(self):
         return self._num_alumnos
+    @num_alumnos.setter
+    def num_alumnos(self, num_alumnos):
+        self._num_alumnos = num_alumnos
     
     @property
     def nivel(self):

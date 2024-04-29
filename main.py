@@ -56,56 +56,47 @@ class SimuladorAcademias:
         oferta_agregada = AVL()
 
         # Recorrer el árbol de cursos del arbol_A
-        for clave in arbol_A:
-
-            curso_A = arbol_A.__getitem__(clave)
-            
-            # Verificar si el curso existe en el arbol_B
-            if clave in arbol_B:
-                
-                curso_B = arbol_B.__getitem__(clave)
-
-                # Calcular el beneficio por hora y estudiante de cada curso
-                beneficio_A = curso_A.precio / (curso_A.duracion * curso_A.num_alumnos)
-                beneficio_B = curso_B.precio / (curso_B.duracion * curso_B.num_alumnos)
-                    # Seleccionar el curso con mayor beneficio
-                if beneficio_A > beneficio_B:
-                    curso_seleccionado = curso_A
-                else:
-                    curso_seleccionado = curso_B
+        for clave_A in arbol_A:
+            curso_A = arbol_A.__getitem__(clave_A)
+            # Recorrer el árbol de cursos del arbol_B
+            for clave_B in arbol_B: 
+                curso_B = arbol_B.__getitem__(clave_B)
+                if clave_A == clave_B:
+                    beneficio_A = curso_A.precio / (curso_A.duracion * curso_A.num_alumnos)
+                    beneficio_B = curso_B.precio / (curso_B.duracion * curso_B.num_alumnos)
+                # Seleccionar el curso con mayor beneficio
+                    if beneficio_A > beneficio_B:
+                        curso_seleccionado = curso_A
+                    else:
+                        curso_seleccionado = curso_B
                     # Sumar el número de estudiantes de los grupos fusionados
-                num_alumnos_fusionados = curso_A.num_alumnos + curso_B.num_alumnos
+                    num_alumnos_fusionados = curso_A.num_alumnos + curso_B.num_alumnos
                     # Actualizar el curso seleccionado con el nuevo número de estudiantes
-                curso_seleccionado.num_alumnos = num_alumnos_fusionados
+                    curso_seleccionado.num_alumnos = num_alumnos_fusionados
                     # Agregar el curso seleccionado al árbol de oferta agregada
-                oferta_agregada[clave] = curso_seleccionado
-            else:
-                if curso_A.nombre == curso_B.nombre:
-                    curso_A.nombre = f"{curso_A.nombre} - {nombre_academia_A}"
-                    curso_B.nombre = f"{curso_B.nombre} - {nombre_academia_B}"
-                    
-            oferta_agregada[clave] = curso_A
+                    oferta_agregada[clave_A] = curso_seleccionado
 
-        # Recorrer el árbol de cursos del arbol_B
-        for clave in arbol_B:
-            # Verificar si el curso no existe en el árbol de oferta agregada
-            if clave not in oferta_agregada:
-                if curso_B.nombre == curso_A.nombre:
-                    # Añadir el nombre de la compañía al curso del arbol_B
-                    curso_B.nombre = f"{curso_B.nombre} - {nombre_academia_B}"
-                # Agregar el curso del arbol_B al árbol de oferta agregada
-                oferta_agregada[clave] = curso_B
+                else:
+                    if curso_A.nombre == curso_B.nombre:
+                        curso_A.nombre = f"{curso_A.nombre} - {nombre_academia_A}"
+                        curso_B.nombre = f"{curso_B.nombre} - {nombre_academia_B}"
+                
+                oferta_agregada[clave_B] = curso_B
 
-            # Imprimir el resultado de la oferta agregada
-        for clave, curso in oferta_agregada.items():
-            print(f"Curso: {curso.nombre}")
+            oferta_agregada[clave_A] = curso_A
+        
+
+        # Imprimir el resultado de la oferta agregada
+        for clave in oferta_agregada:
+            curso = oferta_agregada.__getitem__(clave)
+            print(f"Nombre: {curso.nombre}")
             print(f"Duración: {curso.duracion}")
             print(f"Número de alumnos: {curso.num_alumnos}")
             print(f"Nivel: {curso.nivel}")
             print(f"Idioma: {curso.idioma}")
             print(f"Precio: {curso.precio}")
             print("")
-
+        
         return oferta_agregada
     
     def oferta_comun(self):
@@ -163,11 +154,12 @@ def main():
     simulator = SimuladorAcademias()
     with open(sys.argv[1]) as f:
         cursosA_text = f.read()
-        simulator.leer_cursos(cursosA_text)
+        cursosA = simulator.leer_cursos(cursosA_text)
     with open(sys.argv[2]) as g:
         cursosB_text = g.read()
-        simulator.leer_cursos(cursosB_text)
-        # simulator.oferta_agregada(cursosA, cursosB)
+        cursosB = simulator.leer_cursos(cursosB_text)
+    
+    simulator.oferta_agregada(cursosA, cursosB, "Academia A", "Academia B")
 
         #simulator.execute_menu(cursos)
 

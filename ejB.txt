@@ -7,5 +7,5 @@ C,60,18,A,Eng,22.00
 Perl,90,10,A,Eng,18.00
 Haskell,60,12,B,Eng,20.00
 Lua,45,10,A,Gal,14.00
-Julia,60,10,B,Eng,17.00
+Julia,60,10,C,Eng,17.00
 Prolog,60,10,B,Eng,18.00
