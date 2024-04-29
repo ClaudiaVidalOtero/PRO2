@@ -50,52 +50,51 @@ class SimuladorAcademias:
         return cursos
     
     
-    def oferta_agregada(self, arbol_origen, arbol_destino, nombre_academia_origen, nombre_academia_destino):
+    def oferta_agregada(self, arbol_A, arbol_B, nombre_academia_A, nombre_academia_B):
 
         # Crear un nuevo árbol para almacenar la oferta agregada
         oferta_agregada = AVL()
 
-        # Recorrer el árbol de cursos del arbol_origen
-        for clave in arbol_origen:
+        # Recorrer el árbol de cursos del arbol_A
+        for clave in arbol_A:
 
-            curso_origen = arbol_origen[clave]
-            # Verificar si el curso existe en el arbol_destino
-            if clave in arbol_destino:
-                curso_destino = arbol_destino[clave]
-                # Verificar si los cursos tienen el mismo nombre
-                if curso_origen.nombre == curso_destino.nombre:
-                    # Calcular el beneficio por hora y estudiante de cada curso
-                    beneficio_origen = curso_origen.precio / (curso_origen.duracion * curso_origen.num_alumnos)
-                    beneficio_destino = curso_destino.precio / (curso_destino.duracion * curso_destino.num_alumnos)
+            curso_A = arbol_A.__getitem__(clave)
+            
+            # Verificar si el curso existe en el arbol_B
+            if clave in arbol_B:
+                
+                curso_B = arbol_B.__getitem__(clave)
+
+                # Calcular el beneficio por hora y estudiante de cada curso
+                beneficio_A = curso_A.precio / (curso_A.duracion * curso_A.num_alumnos)
+                beneficio_B = curso_B.precio / (curso_B.duracion * curso_B.num_alumnos)
                     # Seleccionar el curso con mayor beneficio
-                    if beneficio_origen > beneficio_destino:
-                        curso_seleccionado = curso_origen
-                    else:
-                        curso_seleccionado = curso_destino
-                    curso_seleccionado.nombre = f"{curso_seleccionado.nombre} - {nombre_academia_origen} - {nombre_academia_destino}"
-                    # Sumar el número de estudiantes de los grupos fusionados
-                    num_alumnos_fusionados = curso_origen.num_alumnos + curso_destino.num_alumnos
-                    # Actualizar el curso seleccionado con el nuevo número de estudiantes
-                    curso_seleccionado.num_alumnos = num_alumnos_fusionados
-                    # Agregar el curso seleccionado al árbol de oferta agregada
-                    oferta_agregada[clave] = curso_seleccionado
+                if beneficio_A > beneficio_B:
+                    curso_seleccionado = curso_A
                 else:
-                    # Añadir el nombre de la compañía al curso del arbol_destino
-                    curso_destino.nombre = f"{curso_destino.nombre} - {nombre_academia}"
-                    # Agregar el curso del arbol_destino al árbol de oferta agregada
-                    oferta_agregada[clave] = curso_destino
+                    curso_seleccionado = curso_B
+                    # Sumar el número de estudiantes de los grupos fusionados
+                num_alumnos_fusionados = curso_A.num_alumnos + curso_B.num_alumnos
+                    # Actualizar el curso seleccionado con el nuevo número de estudiantes
+                curso_seleccionado.num_alumnos = num_alumnos_fusionados
+                    # Agregar el curso seleccionado al árbol de oferta agregada
+                oferta_agregada[clave] = curso_seleccionado
             else:
-                # Agregar el curso del arbol_origen al árbol de oferta agregada
-                oferta_agregada[clave] = curso_origen
+                if curso_A.nombre == curso_B.nombre:
+                    curso_A.nombre = f"{curso_A.nombre} - {nombre_academia_A}"
+                    curso_B.nombre = f"{curso_B.nombre} - {nombre_academia_B}"
+                    
+            oferta_agregada[clave] = curso_A
 
-        # Recorrer el árbol de cursos del arbol_destino
-        for clave, curso_destino in arbol_destino.items():
+        # Recorrer el árbol de cursos del arbol_B
+        for clave in arbol_B:
             # Verificar si el curso no existe en el árbol de oferta agregada
             if clave not in oferta_agregada:
-                # Añadir el nombre de la compañía al curso del arbol_destino
-                curso_destino.nombre = f"{curso_destino.nombre} - {nombre_academia}"
-                # Agregar el curso del arbol_destino al árbol de oferta agregada
-                oferta_agregada[clave] = curso_destino
+                if curso_B.nombre == curso_A.nombre:
+                    # Añadir el nombre de la compañía al curso del arbol_B
+                    curso_B.nombre = f"{curso_B.nombre} - {nombre_academia_B}"
+                # Agregar el curso del arbol_B al árbol de oferta agregada
+                oferta_agregada[clave] = curso_B
 
             # Imprimir el resultado de la oferta agregada
         for clave, curso in oferta_agregada.items():
@@ -103,8 +102,7 @@ class SimuladorAcademias:
             print(f"Duración: {curso.duracion}")
             print(f"Número de alumnos: {curso.num_alumnos}")
             print(f"Nivel: {curso.nivel}")
-            print(f"Idioma: {curso.idio
-                             ma}")
+            print(f"Idioma: {curso.idioma}")
             print(f"Precio: {curso.precio}")
             print("")
 
