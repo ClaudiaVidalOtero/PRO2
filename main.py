@@ -7,21 +7,25 @@ import pandas as pd
 from curso import Curso
 from avl_tree import AVL
 from binary_search_tree import *
+
 class SimuladorAcademias:
-
-    curso_data = []
-
-    def leer_cursos(self, text: str):
+    
+    arbolB_data = []
+    arbolA_data = []
+    
+    def leer_cursos(self, text: str, arbol: str):
         
+
         """
         Crea los cursos a partir de un texto dado y las almacena en un arbol posicional,
         además, crea una lista para calcular las métricas.
 
         Parameters:
             text (str): Texto multilínea que contiene los datos de los cursos.
+            arbol (str): Nombre de la academia.
 
         Returns:
-            Lista posicional ordenada que contiene las peliculas cargadas desde el archivo.
+            AVL: un arbol posicional que contiene los cursos.
         """
         cursos = AVL()
         lines = text.split("\n")
@@ -42,12 +46,27 @@ class SimuladorAcademias:
                 curso = Curso(nombre, duracion, num_alumnos, nivel, idioma, precio)
                 clave = (curso.nombre, curso.nivel, curso.idioma)
                 cursos[clave] = curso 
+                if arbol == 'arbol_A':
+                    self.arbolA_data.append(Metrics(curso.nombre, curso.duracion, curso.num_alumnos, curso.nivel, curso.idioma, curso.precio))
+                elif arbol == 'arbol_B':
+                    self.arbolB_data.append(Metrics(curso.nombre, curso.duracion, curso.num_alumnos, curso.nivel, curso.idioma, curso.precio))
             else:
                 print(f"Error: línea mal formateada - {line}")
 
         return cursos
     
     def seleccionar_curso_mayor_beneficio(self, curso_A, curso_B):
+
+        """ Selecciona el curso con mayor beneficio entre dos cursos dados (precio por hora y estudiante). 
+        El número de estudiantes de los grupos fusionados se sumará.
+
+        Parameters:
+            curso_A (Curso): primer curso.
+            curso_B (Curso): segundo curso.
+        Returns:
+            Curso: el curso seleccionado con mayor beneficio entre curso_A y curso_B.
+        """
+
         beneficio_A = curso_A.precio / (curso_A.duracion * curso_A.num_alumnos)
         beneficio_B = curso_B.precio / (curso_B.duracion * curso_B.num_alumnos)
         # Seleccionar el curso con mayor beneficio
@@ -59,6 +78,7 @@ class SimuladorAcademias:
         num_alumnos_fusionados = curso_A.num_alumnos + curso_B.num_alumnos
         # Actualizar el curso seleccionado con el nuevo número de estudiantes
         curso_seleccionado.num_alumnos = num_alumnos_fusionados
+
         return curso_seleccionado
 
     def oferta_agregada(self, arbol_A, arbol_B, nombre_academia_A, nombre_academia_B):
@@ -86,7 +106,6 @@ class SimuladorAcademias:
                 oferta_agregada[clave_B] = curso_B
 
             oferta_agregada[clave_A] = curso_A
-        
 
         # Imprimir el resultado de la oferta agregada
         for clave in oferta_agregada:
@@ -103,8 +122,8 @@ class SimuladorAcademias:
     
     def oferta_comun(self, arbol_A, arbol_B):
 
+
         oferta_comun = AVL()
-        self.arbolB_data = []
 
         for clave_B in arbol_B:
             curso_B = arbol_B.__getitem__(clave_B)
@@ -126,6 +145,54 @@ class SimuladorAcademias:
             print("")
 
         return oferta_comun
+    
+    def show_menu(self):
+        """ Muestra el menú de opciones disponibles."""
+        print("\n--- Menú ---")
+        print("1. Leer los ficheros de los cursos e insertarlos en árboles AVL")
+        print("2. Operación 'oferta agregada' - cursos realizados por cada academia")
+        print("3. Operación 'oferta común' - cursos realizados por ambas academias")
+        print("4. Mostrar métricas")
+        print("5. Salir")
+    def comprobar_cursos_cargados(self):
+        """ Comprueba si los cursos de las academias A y B han sido cargados."""
+
+        if "cursosA" not in locals() and "cursosB" not in locals():
+            print("Por favor, primero cargue los cursos de las academias A y B.")
+            return False
+        return True
+    def execute_menu(self):
+        """ 
+        Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
+            
+        """
+        while True:
+            self.show_menu()
+            option = input("Seleccione una opción: ")
+
+            if option == "1": # Leer los ficheros de los cursos e insertarlos en árboles AVL
+                academia_A = input("Introduce el nombre del archivo txt de la academia A:")
+                with open(academia_A) as f:
+                    cursosA_text = f.read()
+                    cursosA = self.leer_cursos(cursosA_text, 'arbol_A')
+                academia_B = input("Introduce el nombre del archivo txt de la academia B:")
+                with open(academia_B) as g:
+                    cursosB_text = g.read()
+                    cursosB = self.leer_cursos(cursosB_text, 'arbol_B')
+            elif option == "2": # Operación 'oferta agregada'
+                if not self.comprobar_cursos_cargados():
+                    self.oferta_agregada(cursosA, cursosB, "Academia A", "Academia B")
+            elif option == "3": # Operación 'oferta común'
+                if not self.comprobar_cursos_cargados():
+                    self.oferta_comun(cursosA, cursosB)
+            elif option == "4": # Mostrar métricas
+                if not self.comprobar_cursos_cargados():
+                    metrics(self)
+            elif option == "5": # Salir
+                print("Hasta luego!")
+                break
+            else:
+                print("Opción no válida. Por favor, seleccione una opción válida.")
 
 class Metrics:
     """
@@ -175,8 +242,8 @@ class Metrics:
         return self._curso_ingresos
 
 def metrics(self):
-        
         """Crea las estadísticas pedidas por el enunciado."""
+
         #CREAMOS UN DATAFRAME CON LOS DATOS DE CADA CURSO POR CADA ARBOL.
         print("DATAFRAME DEL ARBOL A:")
         data_A = pd.DataFrame([
@@ -242,19 +309,7 @@ def main():
     La función principal que lee desde un archivo y comienza la simulación.
     """
     simulator = SimuladorAcademias()
-    with open(sys.argv[1]) as f:
-        cursosA_text = f.read()
-        cursosA = simulator.leer_cursos(cursosA_text)
-    with open(sys.argv[2]) as g:
-        cursosB_text = g.read()
-        cursosB = simulator.leer_cursos(cursosB_text)
-    #print("OFERTA AGREGADA:")
-    #simulator.oferta_agregada(cursosA, cursosB, "Academia A", "Academia B")
-    print("OFERTA COMÚN:")
-    simulator.oferta_comun(cursosA, cursosB)
-    #metrics(simulator)
-    #simulator.execute_menu(cursos)
-
+    simulator.execute_menu()
     
 if __name__ == '__main__':
     main()
