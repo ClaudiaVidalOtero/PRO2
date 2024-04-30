@@ -9,3 +9,5 @@ Haskell,60,12,B,Eng,20.00
 Lua,45,10,A,Gal,14.00
 Julia,60,10,C,Eng,17.00
 Prolog,60,10,B,Eng,18.00
+Prolog,80,10,B,Cas,35.00
+SQL,60,25,B,Eng,19.00
