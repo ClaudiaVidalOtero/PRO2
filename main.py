@@ -85,12 +85,10 @@ class SimuladorAcademias:
 
         # Crear un nuevo árbol para almacenar la oferta agregada
         oferta_agregada = AVL()
-        self.arbolA_data = []
 
         # Recorrer el árbol de cursos del arbol_A
         for clave_A in arbol_A:
             curso_A = arbol_A.__getitem__(clave_A)
-            self.arbolA_data.append(Metrics(curso_A.nombre, curso_A.duracion, curso_A.num_alumnos, curso_A.nivel, curso_A.idioma, curso_A.precio))
             # Recorrer el árbol de cursos del arbol_B
             for clave_B in arbol_B: 
                 curso_B = arbol_B.__getitem__(clave_B)
@@ -127,7 +125,6 @@ class SimuladorAcademias:
 
         for clave_B in arbol_B:
             curso_B = arbol_B.__getitem__(clave_B)
-            self.arbolB_data.append(Metrics(curso_B.nombre, curso_B.duracion, curso_B.num_alumnos, curso_B.nivel, curso_B.idioma, curso_B.precio))
             for clave_A in arbol_A:
                 curso_A = arbol_A.__getitem__(clave_A)
                 if clave_A == clave_B:
