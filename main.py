@@ -154,13 +154,14 @@ class SimuladorAcademias:
         print("3. Operación 'oferta común' - cursos realizados por ambas academias")
         print("4. Mostrar métricas")
         print("5. Salir")
+
     def comprobar_cursos_cargados(self):
         """ Comprueba si los cursos de las academias A y B han sido cargados."""
-
-        if "cursosA" not in locals() and "cursosB" not in locals():
-            print("Por favor, primero cargue los cursos de las academias A y B.")
+        if not self.arbolA_data or not self.arbolB_data:
+            print("Por favor, primero cargue los cursos de las academias A y B (opción 1).")
             return False
         return True
+
     def execute_menu(self):
         """ 
         Muestra el menú de opciones disponibles y realiza las acciones correspondientes según la opción seleccionada por el usuario.
@@ -180,13 +181,15 @@ class SimuladorAcademias:
                     cursosB_text = g.read()
                     cursosB = self.leer_cursos(cursosB_text, 'arbol_B')
             elif option == "2": # Operación 'oferta agregada'
-                if not self.comprobar_cursos_cargados():
+                if self.comprobar_cursos_cargados():
+                    print("Oferta agregada:")
                     self.oferta_agregada(cursosA, cursosB, "Academia A", "Academia B")
             elif option == "3": # Operación 'oferta común'
-                if not self.comprobar_cursos_cargados():
+                if self.comprobar_cursos_cargados():
+                    print("Oferta común:")
                     self.oferta_comun(cursosA, cursosB)
             elif option == "4": # Mostrar métricas
-                if not self.comprobar_cursos_cargados():
+                if self.comprobar_cursos_cargados():
                     metrics(self)
             elif option == "5": # Salir
                 print("Hasta luego!")
