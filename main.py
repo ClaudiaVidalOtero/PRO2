@@ -9,7 +9,7 @@ from avl_tree import AVL
 from binary_search_tree import *
 
 class SimuladorAcademias:
-    
+    """Una clase que simula la gestión de diversos cursos provenientes de dos academias."""
     arbolB_data = []
     arbolA_data = []
     
@@ -82,6 +82,20 @@ class SimuladorAcademias:
         return curso_seleccionado
 
     def oferta_agregada(self, arbol_A, arbol_B, nombre_academia_A, nombre_academia_B):
+        """
+        Combina los cursos de dos árboles de cursos (arbol_A y arbol_B) en un nuevo árbol llamado oferta_agregada.
+        Los cursos con claves idénticas se fusionan seleccionando el curso con el mayor beneficio.
+        Los cursos con nombres idénticos pero claves diferentes se renombran para indicar la academia de origen.
+        
+        Parameters:
+            arbol_A (AVL): Árbol de cursos de la academia A.
+            arbol_B (AVL): Árbol de cursos de la academia B.
+            nombre_academia_A (str): Nombre de la academia A.
+            nombre_academia_B (str): Nombre de la academia B.
+            
+        Returns:
+            AVL: Un árbol AVL que contiene la oferta agregada de cursos de ambas academias.
+        """
 
         # Crear un nuevo árbol para almacenar la oferta agregada
         oferta_agregada = AVL()
@@ -119,7 +133,18 @@ class SimuladorAcademias:
         return oferta_agregada
     
     def oferta_comun(self, arbol_A, arbol_B):
+        """
+        Encuentra y devuelve la oferta común entre dos árboles de cursos (arbol_A y arbol_B).
+        La oferta común consiste en cursos que están presentes en ambos árboles, seleccionando el curso
+        con el mayor beneficio en caso de existir cursos con claves idénticas.
 
+        Args:
+            arbol_A (AVL): Árbol de cursos de la academia A.
+            arbol_B (AVL): Árbol de cursos de la academia B.
+
+        Returns:
+            AVL: Un árbol AVL que contiene la oferta común de cursos presentes en ambos árboles.
+        """
 
         oferta_comun = AVL()
 
