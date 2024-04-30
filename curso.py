@@ -10,12 +10,11 @@ class Curso(ABC):
         Inicializa la clase Curso y se le asignan sus atributos.
         Parameters:
             nombre (str): nombre del curso.
-            duracion (int): duración del curso en minutos.
+            duracion (int): duración del curso en horas.
             num_alumnos (int): número de participantes del curso.
             nivel (str): nivel de difcultad del curso.
             idioma (str): idioma en el que se imparte el curso.
             precio (int): precio por persona del curso.
-        
         """
         self._nombre = nombre
         self._duracion = duracion

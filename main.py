@@ -22,7 +22,7 @@ class SimuladorAcademias:
 
         Parameters:
             text (str): Texto multilínea que contiene los datos de los cursos.
-            arbol (str): Nombre de la academia.
+            arbol (str): Nombre del arbol de la academia.
 
         Returns:
             AVL: un arbol posicional que contiene los cursos.
@@ -67,8 +67,8 @@ class SimuladorAcademias:
             Curso: el curso seleccionado con mayor beneficio entre curso_A y curso_B.
         """
 
-        beneficio_A = curso_A.precio / (curso_A.duracion * curso_A.num_alumnos)
-        beneficio_B = curso_B.precio / (curso_B.duracion * curso_B.num_alumnos)
+        beneficio_A = curso_A.precio * curso_A.duracion * curso_A.num_alumnos
+        beneficio_B = curso_B.precio * curso_B.duracion * curso_B.num_alumnos
         # Seleccionar el curso con mayor beneficio
         if beneficio_A > beneficio_B:
             curso_seleccionado = curso_A
@@ -204,11 +204,11 @@ class SimuladorAcademias:
                     cursosB = self.leer_cursos(cursosB_text, 'arbol_B')
             elif option == "2": # Operación 'oferta agregada'
                 if self.comprobar_cursos_cargados():
-                    print("Oferta agregada:")
+                    print("------------ OFERTA AGREGADA ------------")
                     self.oferta_agregada(cursosA, cursosB, "Academia A", "Academia B")
             elif option == "3": # Operación 'oferta común'
                 if self.comprobar_cursos_cargados():
-                    print("Oferta común:")
+                    print("------------ OFERTA COMÚN ------------")
                     self.oferta_comun(cursosA, cursosB)
             elif option == "4": # Mostrar métricas
                 if self.comprobar_cursos_cargados():
@@ -317,8 +317,8 @@ def metrics(self):
         print (data_cursoB)
 
         #3) Ingresos totales posibles.
-        total_income_A = (data_A['precio'] * data_A['num_alumnos']).sum()
-        total_income_B = (data_B['precio'] * data_A['num_alumnos']).sum()
+        total_income_A = (data_A['precio'] * data_A['duracion'] * data_A['num_alumnos']).sum()
+        total_income_B = (data_B['precio'] * data_B['duracion'] * data_B['num_alumnos']).sum()
 
         print("\n")
         print("TOTAL POSSIBLE INCOME FOR CURSOS A")
