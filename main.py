@@ -2,11 +2,9 @@
 Aldana Smyna Medina Lostaunau (aldana.medina@udc.es)
 Claudia Vidal Otero (claudia.votero@udc.es)
 """
-import sys
 import pandas as pd
 from curso import Curso
 from avl_tree import AVL
-from binary_search_tree import *
 
 class SimuladorAcademias:
     """Una clase que simula la gestión de diversos cursos provenientes de dos academias."""
@@ -168,7 +166,7 @@ class SimuladorAcademias:
 
         return oferta_comun
     
-    def show_menu(self):
+    def mostrar_menu(self):
         """ Muestra el menú de opciones disponibles."""
         print("\n--- Menú ---")
         print("1. Leer los ficheros de los cursos e insertarlos en árboles AVL")
@@ -190,7 +188,7 @@ class SimuladorAcademias:
             
         """
         while True:
-            self.show_menu()
+            self.mostrar_menu()
             option = input("Seleccione una opción: ")
 
             if option == "1": # Leer los ficheros de los cursos e insertarlos en árboles AVL
