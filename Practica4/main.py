@@ -7,13 +7,16 @@ from curso import Curso
 from avl_tree import AVL
 
 class SimuladorAcademias:
+
     """Una clase que simula la gestión de diversos cursos provenientes de dos academias."""
-    arbolB_data = []
-    arbolA_data = []
+    
+    def __init__(self):
+        self.arbolB_data = []
+        self.arbolA_data = []
+        self.cursos = AVL()
     
     def leer_cursos(self, text: str, arbol: str):
-        
-
+    
         """
         Crea los cursos a partir de un texto dado y las almacena en un arbol posicional,
         además, crea una lista para calcular las métricas.
@@ -25,7 +28,6 @@ class SimuladorAcademias:
         Returns:
             AVL: un arbol posicional que contiene los cursos.
         """
-        cursos = AVL()
         lines = text.split("\n")
 
         # Iterar sobre cada línea en el texto
@@ -43,7 +45,7 @@ class SimuladorAcademias:
                 # Crea una instancia de Curso y la agrega al arbol posicional de cursos
                 curso = Curso(nombre, duracion, num_alumnos, nivel, idioma, precio)
                 clave = (curso.nombre, curso.nivel, curso.idioma)
-                cursos[clave] = curso 
+                self.cursos[clave] = curso 
                 if arbol == 'arbol_A':
                     self.arbolA_data.append(Metrics(curso.nombre, curso.duracion, curso.num_alumnos, curso.nivel, curso.idioma, curso.precio))
                 elif arbol == 'arbol_B':
@@ -51,7 +53,7 @@ class SimuladorAcademias:
             else:
                 print(f"Error: línea mal formateada - {line}")
 
-        return cursos
+        return self.cursos
     
     def seleccionar_curso_mayor_beneficio(self, curso_A, curso_B):
 
