@@ -4,7 +4,7 @@ Claudia Vidal Otero (claudia.votero@udc.es)
 """
 import sys
 from array_queue import ArrayQueue
-from process import Proceso
+from proceso import Proceso
 from gestor_colas import GestorColas
 
 class QueueSimulator:
