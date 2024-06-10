@@ -8,6 +8,19 @@ import pandas as pd
 from collections import defaultdict
 
 class GestorColas:
+    """
+    Inicializa la clase GestorColas y se le asignan sus atributos.
+
+    Parameters:
+        cpu_short_queue (ArrayQueue): Cola para procesos cortos de CPU.
+        cpu_long_queue (ArrayQueue): Cola para procesos largos de CPU.
+        gpu_short_queue (ArrayQueue): Cola para procesos cortos de GPU.
+        gpu_long_queue (ArrayQueue): Cola para procesos largos de GPU.
+        running_processes (dict): Diccionario con los procesos actualmente en ejecución, clasificados por tipo de cola.
+        penalizaciones (dict): Diccionario de penalizaciones activas por usuario.
+        penalizaciones_activas (defaultdict): Diccionario que cuenta el número de penalizaciones aplicadas por usuario.
+        lista_datos_procesos (list): Lista de datos de procesos usados para análisis y estadísticas.
+    """
     def __init__(self):
         self.cpu_short_queue = ArrayQueue()
         self.cpu_long_queue = ArrayQueue()
@@ -24,6 +37,12 @@ class GestorColas:
         self.lista_datos_procesos = []
 
     def agregar_proceso(self, proceso, tiempo_actual):
+        """
+        Agrega un proceso a la cola de ejecución correspondiente según su tipo de recurso y tiempo estimado.
+        Parameters:
+            proceso (Proceso): El proceso a agregar a la cola de ejecución.
+            tiempo_actual (int): El tiempo actual de la simulación en unidades de tiempo.
+        """
         proceso.tiempo_entrada = tiempo_actual
         if proceso.tipo_recurso == 'cpu' and proceso.tiempo_estimado == 'short':
             self.cpu_short_queue.enqueue(proceso)
@@ -35,6 +54,12 @@ class GestorColas:
             self.gpu_long_queue.enqueue(proceso)
 
     def iniciar_proceso(self, tipo_cola, tiempo_actual):
+        """
+        Inicia un proceso en la cola de ejecución si no hay procesos actualmente en ejecución en la cola especificada.
+        Parameters:
+            tipo_cola (str): El tipo de cola de ejecución del proceso.
+            tiempo_actual (int): El tiempo actual de la simulación en unidades de tiempo.
+        """
         queue_map = {
             'cpu_short': self.cpu_short_queue,
             'cpu_long': self.cpu_long_queue,
@@ -68,6 +93,12 @@ class GestorColas:
                     print(f"Proceso añadido a cola de ejecución: {tiempo_actual} {proceso.pid} {proceso.id_usuario} {proceso.tipo_recurso} {proceso.tiempo_estimado}")
 
     def terminar_proceso(self, tipo_cola, tiempo_actual):
+        """
+        Termina un proceso en ejecución si ha alcanzado su tiempo de finalización y aplica penalizaciones si es necesario.
+        Parameters:
+            tipo_cola (str): El tipo de cola de ejecución del proceso.
+            tiempo_actual (int): El tiempo actual de la simulación en unidades de tiempo.
+        """
         proceso = self.running_processes[tipo_cola]
         if proceso and tiempo_actual >= proceso.tiempo_inicio + proceso.tiempo_ejecucion:
             print(f"Proceso terminado: {tiempo_actual} {proceso.pid} {proceso.id_usuario} {proceso.tipo_recurso} {proceso.tiempo_estimado} {proceso.tiempo_entrada} {proceso.tiempo_inicio} {proceso.tiempo_ejecucion}")
@@ -77,6 +108,10 @@ class GestorColas:
                 print(f"Penalización activa: {tiempo_actual} {proceso.id_usuario}")
 
     def estadisticas(self):
+        """
+        Crea un DataFrame con los datos de cada proceso almacenados en `self.lista_datos_procesos`
+        y calcula diversas estadísticas usando pandas.
+        """
         # Creamos un DataFrame con los datos de cada proceso
         data = pd.DataFrame(self.lista_datos_procesos)
         print(data)

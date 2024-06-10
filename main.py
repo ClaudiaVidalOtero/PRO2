@@ -8,6 +8,14 @@ from proceso import Proceso
 from gestor_colas import GestorColas
 
 class QueueSimulator:
+    """
+    Esta clase inicializa una cola de procesos y un gestor de colas, así como el tiempo actual de la simulación.
+
+    Attributes:
+        processes (ArrayQueue): Cola de procesos a ser gestionados.
+        gestor (GestorColas): Instancia de la clase GestorColas para gestionar las colas de procesos.
+        tiempo_actual (int): El tiempo actual de la simulación en unidades de tiempo.
+    """
     def __init__(self):
         self.processes = ArrayQueue()
         self.gestor = GestorColas()
@@ -42,6 +50,9 @@ class QueueSimulator:
 
 
     def simular(self):
+        """
+        Simula la gestión de colas de procesos hasta que todas las colas y procesos hayan sido procesados.
+        """
         while not self.processes.is_empty() or any([
             not self.gestor.cpu_short_queue.is_empty(),
             not self.gestor.cpu_long_queue.is_empty(),
